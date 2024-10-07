@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace BlackjackForm
@@ -14,23 +17,12 @@ namespace BlackjackForm
             InitializeComponent();
 
             // Inicializar la baraja y las manos del jugador y la banca
-            baraja = new Baraja(); // Asegúrate de que la baraja se inicializa aquí
+            baraja = new Baraja();
             jugador = new ManoJugador();
             banca = new ManoJugador();
-            // Repartir cartas iniciales
-            jugador.PedirCarta(baraja.RepartirCarta());
-            banca.PedirCarta(baraja.RepartirCarta());
 
-            // Mostrar cartas iniciales
-            ActualizarCartas();
+            IniciarJuego();
         }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // Aquí puedes inicializar el juego de Blackjack, o realizar cualquier otra configuración.
-            IniciarJuego(); // Este es solo un ejemplo de lo que podrías hacer
-        }
-
 
         private void IniciarJuego()
         {
@@ -50,8 +42,44 @@ namespace BlackjackForm
         private void MostrarCartas()
         {
             lblCartasJugador.Text = "Cartas del Jugador: " + string.Join(", ", jugador.Cartas);
-            lblCartasBanca.Text = "Cartas de la Banca: " + banca.Cartas[0] + ", (oculta)"; // La segunda carta de la banca está oculta
+            lblCartasBanca.Text = "Cartas de la Banca: " + banca.Cartas[0] + ", (oculta)";
             lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
+
+            // Mostrar las cartas del jugador
+            MostrarImagenesCartas(jugador.Cartas, panelCartasJugador);
+
+            // Mostrar la primera carta de la banca
+            MostrarImagenesCartas(new List<Carta> { banca.Cartas[0] }, panelCartasBanca);
+        }
+
+        private void MostrarImagenesCartas(List<Carta> cartas, FlowLayoutPanel panel)
+        {
+            panel.Controls.Clear(); // Limpiar las imágenes anteriores
+
+            foreach (var carta in cartas)
+            {
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Size = new Size(100, 150);
+                pictureBox.Image = CargarImagenCarta(carta);
+                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                panel.Controls.Add(pictureBox);
+            }
+        }
+
+        private Image CargarImagenCarta(Carta carta)
+        {
+            string nombreArchivo = $"{carta.Valor}_de_{carta.Palo}.jpg";
+            string rutaImagen = Path.Combine(@"D:\Proyecto C#\BlackJack\imagenes", nombreArchivo);
+
+            if (File.Exists(rutaImagen))
+            {
+                return Image.FromFile(rutaImagen);
+            }
+            else
+            {
+                MessageBox.Show($"Imagen no encontrada: {nombreArchivo}");
+                return null;
+            }
         }
 
         private void btnPedirCarta_Click(object sender, EventArgs e)
@@ -59,7 +87,6 @@ namespace BlackjackForm
             jugador.PedirCarta(baraja.RepartirCarta());
             MostrarCartas();
             jugador.OrdenarCartas();
-            ActualizarCartas();
             int valorJugador = jugador.CalcularValor();
             if (valorJugador > 21)
             {
@@ -98,27 +125,27 @@ namespace BlackjackForm
             IniciarJuego();
         }
 
-        private void ActualizarCartas()
-        {
-            // Actualizar cartas del jugador
-            lblCartasJugador.Text = "Cartas Jugador: " + string.Join(", ", jugador.Cartas);
-
-            // Actualizar valor del jugador
-            lblValorJugador.Text = "Valor Jugador: " + jugador.CalcularValor();
-
-            // Actualizar cartas de la banca
-            lblCartasBanca.Text = "Cartas Banca: " + string.Join(", ", banca.Cartas);
-
-            // Actualizar valor de la banca
-            lblValorBanca.Text = "Valor Banca: " + banca.CalcularValor();
-        }
-
-        private void btnReiniciar_Click(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             IniciarJuego();
         }
 
-        private void lblValorBanca_Click(object sender, EventArgs e)
+        private void bindingNavigator1_RefreshItems(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelCartasJugador_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }

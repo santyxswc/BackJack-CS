@@ -36,7 +36,7 @@ public class Baraja
     {
         cartas = new List<Carta>();
         string[] valores = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
-        string[] palos = { "Picas", "Tréboles", "Corazones", "Diamantes" };
+        string[] palos = { "Picas", "Treboles", "Corazones", "Diamantes" };
 
         foreach (var palo in palos)
         {
@@ -71,6 +71,7 @@ public class Baraja
         return null;
     }
 }
+
 public class ManoJugador
 {
     public List<Carta> Cartas { get; }
@@ -115,5 +116,12 @@ public class ManoJugador
     public void OrdenarCartas()
     {
         Cartas.Sort((c1, c2) => c2.ObtenerValorNumerico().CompareTo(c1.ObtenerValorNumerico()));
+    }
+
+    public string ObtenerRutaImagen(Carta carta)
+    {
+        // Cambia esto a la ruta donde tienes tus imágenes.
+        string rutaBase = @"D:\Proyecto C#\BlackJack\imagenes";
+        return System.IO.Path.Combine(rutaBase, $"{carta.Valor}_de_{carta.Palo}.jpg");
     }
 }
