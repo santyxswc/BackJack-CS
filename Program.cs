@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BlackjackForm; // Importa el namespace de Form1
+using BlackjackForm; 
 
 namespace BlackJack
 {

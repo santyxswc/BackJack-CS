@@ -11,6 +11,7 @@ namespace BlackjackForm
         private Baraja baraja;
         private ManoJugador jugador;
         private ManoJugador banca;
+        
 
         public Form1()
         {
@@ -48,21 +49,48 @@ namespace BlackjackForm
             // Mostrar las cartas del jugador
             MostrarImagenesCartas(jugador.Cartas, panelCartasJugador);
 
-            // Mostrar la primera carta de la banca
-            MostrarImagenesCartas(new List<Carta> { banca.Cartas[0] }, panelCartasBanca);
+            // Mostrar ambas cartas de la banca, pero la segunda como dorso
+            MostrarImagenesCartas(banca.Cartas, panelCartasBanca, mostrarDorso: true);
         }
 
-        private void MostrarImagenesCartas(List<Carta> cartas, FlowLayoutPanel panel)
+
+        private void MostrarImagenesCartas(List<Carta> cartas, FlowLayoutPanel panel, bool mostrarDorso = false)
         {
             panel.Controls.Clear(); // Limpiar las imágenes anteriores
 
-            foreach (var carta in cartas)
+            for (int i = 0; i < cartas.Count; i++)
             {
                 PictureBox pictureBox = new PictureBox();
                 pictureBox.Size = new Size(100, 150);
-                pictureBox.Image = CargarImagenCarta(carta);
+
+                // Si se está mostrando el dorso y es la segunda carta de la banca (índice 1), muestra el dorso
+                if (mostrarDorso && i == 1)
+                {
+                    pictureBox.Image = CargarImagenDorso();
+                }
+                else
+                {
+                    // Mostrar la carta normalmente
+                    pictureBox.Image = CargarImagenCarta(cartas[i]);
+                }
+
                 pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                 panel.Controls.Add(pictureBox);
+            }
+        }
+
+        private Image CargarImagenDorso()
+        {
+            string rutaDorso = Path.Combine(@"D:\Proyecto C#\BlackJack\imagenes", "Dorso.jpg");
+
+            if (File.Exists(rutaDorso))
+            {
+                return Image.FromFile(rutaDorso);
+            }
+            else
+            {
+                MessageBox.Show($"Imagen del dorso no encontrada: Dorso.jpg");
+                return null;
             }
         }
 
@@ -97,12 +125,16 @@ namespace BlackjackForm
 
         private void btnRetirarse_Click(object sender, EventArgs e)
         {
+            // Calcular valor de la banca
             int valorBanca = banca.CalcularValor();
             while (valorBanca < 17)
             {
                 banca.PedirCarta(baraja.RepartirCarta());
                 valorBanca = banca.CalcularValor();
             }
+
+            // Mostrar todas las cartas de la banca, revelando la carta oculta
+            MostrarCartasFinal();
 
             lblCartasBanca.Text = "Cartas de la Banca: " + string.Join(", ", banca.Cartas);
             lblValorBanca.Text = "Valor de la Banca: " + valorBanca;
@@ -123,6 +155,22 @@ namespace BlackjackForm
             }
 
             IniciarJuego();
+        }
+
+        private void MostrarCartasFinal()
+        {
+            lblCartasJugador.Text = "Cartas del Jugador: " + string.Join(", ", jugador.Cartas);
+            lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
+
+            // Mostrar todas las cartas de la banca, incluyendo la carta oculta
+            lblCartasBanca.Text = "Cartas de la Banca: " + string.Join(", ", banca.Cartas);
+            lblValorBanca.Text = "Valor de la Banca: " + banca.CalcularValor();
+
+            // Mostrar las cartas del jugador
+            MostrarImagenesCartas(jugador.Cartas, panelCartasJugador);
+
+            // Mostrar todas las cartas de la banca
+            MostrarImagenesCartas(banca.Cartas, panelCartasBanca);
         }
 
         private void Form1_Load(object sender, EventArgs e)
