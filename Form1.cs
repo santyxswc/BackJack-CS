@@ -64,7 +64,7 @@ namespace BlackjackForm
                 PictureBox pictureBox = new PictureBox();
                 pictureBox.Size = new Size(100, 150);
 
-                // Si se está mostrando el dorso y es la segunda carta de la banca (índice 1), muestra el dorso
+                
                 if (mostrarDorso && i == 1)
                 {
                     pictureBox.Image = CargarImagenDorso();

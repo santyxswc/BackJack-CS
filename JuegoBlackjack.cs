@@ -120,7 +120,6 @@ public class ManoJugador
 
     public string ObtenerRutaImagen(Carta carta)
     {
-        // Cambia esto a la ruta donde tienes tus imágenes.
         string rutaBase = @"D:\Proyecto C#\BlackJack\imagenes";
         return System.IO.Path.Combine(rutaBase, $"{carta.Valor}_de_{carta.Palo}.jpg");
     }
