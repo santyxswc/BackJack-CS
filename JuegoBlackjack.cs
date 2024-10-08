@@ -125,3 +125,5 @@ public class ManoJugador
         return System.IO.Path.Combine(rutaBase, $"{carta.Valor}_de_{carta.Palo}.jpg");
     }
 }
+
+

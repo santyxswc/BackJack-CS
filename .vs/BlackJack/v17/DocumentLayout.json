@@ -3,7 +3,15 @@
   "WorkspaceRootPath": "D:\\Proyecto C#\\BlackJack\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\juegoblackjack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:juegoblackjack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|d:\\proyecto c#\\blackjack\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -11,19 +19,11 @@
       "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
-      "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\juegoblackjack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:juegoblackjack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|d:\\proyecto c#\\blackjack\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|D:\\Proyecto C#\\BlackJack\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{7FAA8E27-CAED-47FE-834C-F363A889C9C1}|BlackJack.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -34,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
@@ -63,7 +63,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Form1.Designer.cs",
               "DocumentMoniker": "D:\\Proyecto C#\\BlackJack\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Form1.Designer.cs",
@@ -76,7 +76,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Form1.resx",
               "DocumentMoniker": "D:\\Proyecto C#\\BlackJack\\Form1.resx",
               "RelativeDocumentMoniker": "Form1.resx",
@@ -88,26 +88,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Form1.cs",
               "DocumentMoniker": "D:\\Proyecto C#\\BlackJack\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "D:\\Proyecto C#\\BlackJack\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAGsAAAAAAAAAAADwv50AAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-25T22:07:16.721Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "JuegoBlackjack.cs",
               "DocumentMoniker": "D:\\Proyecto C#\\BlackJack\\JuegoBlackjack.cs",
               "RelativeDocumentMoniker": "JuegoBlackjack.cs",
               "ToolTip": "D:\\Proyecto C#\\BlackJack\\JuegoBlackjack.cs",
               "RelativeToolTip": "JuegoBlackjack.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACoAAAAqAAAA",
+              "ViewState": "AQIAAGcAAAAAAAAAAAAiwIEAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-25T22:05:52.812Z",
               "EditorCaption": ""
