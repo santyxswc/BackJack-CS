@@ -123,8 +123,10 @@ namespace BlackjackForm
             int valorJugador = jugador.CalcularValor();
             if (valorJugador > 21)
             {
+                MostrarCartasFinal();
                 MessageBox.Show("¡Te pasaste de 21! La banca gana.");
                 IniciarJuego();
+                
             }
         }
 
