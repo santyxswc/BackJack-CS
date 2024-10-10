@@ -1,12 +1,37 @@
-### Blackjack
+# BackJack-CS
 
-- el juego esta en etapa de desarrollo y se han hecho cambios importantes como el uso de imagenes en el juego.
-- 
+## Descripción
 
-# Cartas de la baraja: 
+BackJack-CS es un juego de cartas basado en el popular juego de Blackjack, desarrollado en C#. Este proyecto tiene como objetivo proporcionar una experiencia de juego simple y entretenida, utilizando principios de programación orientada a objetos.
 
-![](https://github.com/santyxswc/BackJack-CS/blob/master/imagenes/A_de_Treboles.jpg)
+## Tabla de Contenidos
 
-![](https://github.com/santyxswc/BackJack-CS/blob/master/imagenes/J_de_Treboles.jpg)
+- [Características](#características)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
 
-el juego no tiene un fondo distinto al de un form de windows porque genera un error al usar una PictureBox, pero todo el codigo funciona cuando no tiene un fondo 
+## Características
+
+- Juego interactivo de Blackjack.
+- Opciones para jugar contra la computadora.
+- Registro de puntajes.
+- Interfaz sencilla y fácil de usar.
+
+## Tecnologías Utilizadas
+
+- C#
+- .NET Core
+- Visual Studio
+
+## Instalación
+
+Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
+
+1. Clona el repositorio:
+
+   ```bash
+   git clone https://github.com/santyxswc/BackJack-CS.git
+
