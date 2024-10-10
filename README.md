@@ -35,3 +35,18 @@ Para ejecutar este proyecto en tu máquina local, sigue estos pasos:
    ```bash
    git clone https://github.com/santyxswc/BackJack-CS.git
 
+2. Navega al directorio del proyecto:
+
+   ```bash
+   cd BackJack-CS
+
+3. abrir el proyecto en visual estudio con las direcciones que se especifican en el codigo
+
+4. compila y ejecuta el codigo
+
+## USO 
+
+1. inicia el juego en virtual studio.
+
+2. sigue las instrucciones en la pantalla para jugar.
+
