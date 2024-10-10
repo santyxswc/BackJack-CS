@@ -141,7 +141,6 @@ namespace BlackjackForm
             // Mostrar todas las cartas de la banca, revelando la carta oculta
             MostrarCartasFinal();
 
-            lblCartasBanca.Text = "Cartas de la Banca: " + string.Join(", ", banca.Cartas);
             lblValorBanca.Text = "Valor de la Banca: " + valorBanca;
             MessageBox.Show("Te has retirado.");
 
@@ -164,11 +163,10 @@ namespace BlackjackForm
 
         private void MostrarCartasFinal()
         {
-            lblCartasJugador.Text = "Cartas del Jugador: " + string.Join(", ", jugador.Cartas);
+            //muestra el valor de las cartas del jugador en la parte derecha 
             lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
 
             // Mostrar todas las cartas de la banca, incluyendo la carta oculta
-            lblCartasBanca.Text = "Cartas de la Banca: " + string.Join(", ", banca.Cartas);
             lblValorBanca.Text = "Valor de la Banca: " + banca.CalcularValor();
 
             // Mostrar las cartas del jugador
