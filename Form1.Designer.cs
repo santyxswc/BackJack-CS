@@ -41,40 +41,46 @@
             // lblCartasJugador
             // 
             this.lblCartasJugador.AutoSize = true;
+            this.lblCartasJugador.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
             this.lblCartasJugador.Location = new System.Drawing.Point(64, 29);
             this.lblCartasJugador.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCartasJugador.Name = "lblCartasJugador";
-            this.lblCartasJugador.Size = new System.Drawing.Size(81, 13);
+            this.lblCartasJugador.Size = new System.Drawing.Size(192, 29);
             this.lblCartasJugador.TabIndex = 0;
             this.lblCartasJugador.Text = "Cartas Jugador:";
+            this.lblCartasJugador.Click += new System.EventHandler(this.lblCartasJugador_Click);
             // 
             // lblCartasBanca
             // 
             this.lblCartasBanca.AutoSize = true;
+            this.lblCartasBanca.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
             this.lblCartasBanca.Location = new System.Drawing.Point(64, 300);
             this.lblCartasBanca.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCartasBanca.Name = "lblCartasBanca";
-            this.lblCartasBanca.Size = new System.Drawing.Size(74, 13);
+            this.lblCartasBanca.Size = new System.Drawing.Size(173, 29);
             this.lblCartasBanca.TabIndex = 1;
             this.lblCartasBanca.Text = "Cartas Banca:";
+            this.lblCartasBanca.Click += new System.EventHandler(this.lblCartasBanca_Click);
             // 
             // lblValorJugador
             // 
             this.lblValorJugador.AutoSize = true;
-            this.lblValorJugador.Location = new System.Drawing.Point(797, 29);
+            this.lblValorJugador.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblValorJugador.Location = new System.Drawing.Point(893, 29);
             this.lblValorJugador.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblValorJugador.Name = "lblValorJugador";
-            this.lblValorJugador.Size = new System.Drawing.Size(75, 13);
+            this.lblValorJugador.Size = new System.Drawing.Size(177, 29);
             this.lblValorJugador.TabIndex = 2;
             this.lblValorJugador.Text = "Valor Jugador:";
             // 
             // lblValorBanca
             // 
             this.lblValorBanca.AutoSize = true;
-            this.lblValorBanca.Location = new System.Drawing.Point(804, 300);
+            this.lblValorBanca.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblValorBanca.Location = new System.Drawing.Point(893, 300);
             this.lblValorBanca.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblValorBanca.Name = "lblValorBanca";
-            this.lblValorBanca.Size = new System.Drawing.Size(68, 13);
+            this.lblValorBanca.Size = new System.Drawing.Size(158, 29);
             this.lblValorBanca.TabIndex = 3;
             this.lblValorBanca.Text = "Valor Banca:";
             // 
@@ -83,7 +89,7 @@
             this.btnPedirCarta.Location = new System.Drawing.Point(67, 623);
             this.btnPedirCarta.Margin = new System.Windows.Forms.Padding(2);
             this.btnPedirCarta.Name = "btnPedirCarta";
-            this.btnPedirCarta.Size = new System.Drawing.Size(82, 46);
+            this.btnPedirCarta.Size = new System.Drawing.Size(130, 46);
             this.btnPedirCarta.TabIndex = 4;
             this.btnPedirCarta.Text = "Pedir Carta";
             this.btnPedirCarta.UseVisualStyleBackColor = true;
@@ -91,10 +97,10 @@
             // 
             // btnRetirarse
             // 
-            this.btnRetirarse.Location = new System.Drawing.Point(790, 623);
+            this.btnRetirarse.Location = new System.Drawing.Point(898, 623);
             this.btnRetirarse.Margin = new System.Windows.Forms.Padding(2);
             this.btnRetirarse.Name = "btnRetirarse";
-            this.btnRetirarse.Size = new System.Drawing.Size(82, 46);
+            this.btnRetirarse.Size = new System.Drawing.Size(120, 46);
             this.btnRetirarse.TabIndex = 5;
             this.btnRetirarse.Text = "Retirarse";
             this.btnRetirarse.UseVisualStyleBackColor = true;
@@ -102,7 +108,8 @@
             // 
             // panelCartasJugador
             // 
-            this.panelCartasJugador.Location = new System.Drawing.Point(64, 60);
+            this.panelCartasJugador.BackColor = System.Drawing.Color.Transparent;
+            this.panelCartasJugador.Location = new System.Drawing.Point(64, 101);
             this.panelCartasJugador.Name = "panelCartasJugador";
             this.panelCartasJugador.Size = new System.Drawing.Size(543, 150);
             this.panelCartasJugador.TabIndex = 6;
@@ -110,16 +117,18 @@
             // 
             // panelCartasBanca
             // 
+            this.panelCartasBanca.BackColor = System.Drawing.Color.Transparent;
             this.panelCartasBanca.Location = new System.Drawing.Point(64, 407);
             this.panelCartasBanca.Name = "panelCartasBanca";
             this.panelCartasBanca.Size = new System.Drawing.Size(543, 150);
             this.panelCartasBanca.TabIndex = 7;
+            this.panelCartasBanca.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCartasBanca_Paint);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(962, 721);
+            this.ClientSize = new System.Drawing.Size(1291, 721);
             this.Controls.Add(this.panelCartasBanca);
             this.Controls.Add(this.panelCartasJugador);
             this.Controls.Add(this.btnRetirarse);

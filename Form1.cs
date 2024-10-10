@@ -18,6 +18,10 @@ namespace BlackjackForm
         {
             InitializeComponent();
 
+            //imagen de fondo 
+            this.BackgroundImage = Image.FromFile(@"D:\Proyecto C#\BlackJack\imagenes\fondo.jpg");
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+
             // Inicializar la baraja y las manos del jugador y la banca
             baraja = new Baraja();
             jugador = new ManoJugador();
@@ -43,8 +47,8 @@ namespace BlackjackForm
 
         private void MostrarCartas()
         {
-            lblCartasJugador.Text = "Cartas del Jugador: " + string.Join(", ", jugador.Cartas);
-            lblCartasBanca.Text = "Cartas de la Banca: " + banca.Cartas[0] + ", (oculta)";
+            lblCartasJugador.Text = "Cartas del Jugador: " ;
+            lblCartasBanca.Text = "Cartas de la Banca: " ;
             lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
 
             // Mostrar las cartas del jugador
@@ -186,7 +190,7 @@ namespace BlackjackForm
 
         private void panelCartasJugador_Paint(object sender, PaintEventArgs e)
         {
-
+           
         }
 
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
@@ -195,6 +199,21 @@ namespace BlackjackForm
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelCartasBanca_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void lblCartasBanca_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblCartasJugador_Click(object sender, EventArgs e)
         {
 
         }
