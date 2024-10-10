@@ -2,7 +2,9 @@
 
 ## Descripción
 
-BackJack-CS es un juego de cartas basado en el popular juego de Blackjack, desarrollado en C#. Este proyecto tiene como objetivo proporcionar una experiencia de juego simple y entretenida, utilizando principios de programación orientada a objetos.
+BackJack-CS es un juego de cartas basado en el popular juego de Blackjack, desarrollado en C#. 
+Este proyecto tiene como objetivo proporcionar una experiencia de juego simple y entretenida, 
+utilizando principios de programación orientad a objetos y la estructura de datos.
 
 ## Tabla de Contenidos
 
