@@ -41,7 +41,9 @@
             // lblCartasJugador
             // 
             this.lblCartasJugador.AutoSize = true;
+            this.lblCartasJugador.BackColor = System.Drawing.Color.Transparent;
             this.lblCartasJugador.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblCartasJugador.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblCartasJugador.Location = new System.Drawing.Point(64, 29);
             this.lblCartasJugador.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCartasJugador.Name = "lblCartasJugador";
@@ -53,7 +55,9 @@
             // lblCartasBanca
             // 
             this.lblCartasBanca.AutoSize = true;
+            this.lblCartasBanca.BackColor = System.Drawing.Color.Transparent;
             this.lblCartasBanca.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblCartasBanca.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblCartasBanca.Location = new System.Drawing.Point(64, 300);
             this.lblCartasBanca.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCartasBanca.Name = "lblCartasBanca";
@@ -65,7 +69,9 @@
             // lblValorJugador
             // 
             this.lblValorJugador.AutoSize = true;
+            this.lblValorJugador.BackColor = System.Drawing.Color.Transparent;
             this.lblValorJugador.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblValorJugador.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblValorJugador.Location = new System.Drawing.Point(893, 29);
             this.lblValorJugador.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblValorJugador.Name = "lblValorJugador";
@@ -76,7 +82,9 @@
             // lblValorBanca
             // 
             this.lblValorBanca.AutoSize = true;
+            this.lblValorBanca.BackColor = System.Drawing.Color.Transparent;
             this.lblValorBanca.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F);
+            this.lblValorBanca.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblValorBanca.Location = new System.Drawing.Point(893, 300);
             this.lblValorBanca.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblValorBanca.Name = "lblValorBanca";
