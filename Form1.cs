@@ -4,39 +4,40 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-
 namespace BlackjackForm
 {
     public partial class Form1 : Form
     {
         private Baraja baraja;
-        private ManoJugador jugador;
+        private Jugador jugador;  
         private ManoJugador banca;
-        
 
         public Form1()
         {
             InitializeComponent();
 
-            //imagen de fondo 
+            // Imagen de fondo
+            this.btnApostar.Click += new System.EventHandler(this.btnApostar_Click);
             this.BackgroundImage = Image.FromFile(@"D:\Proyecto C#\BlackJack\imagenes\fondo.jpg");
             this.BackgroundImageLayout = ImageLayout.Stretch;
 
             // Inicializar la baraja y las manos del jugador y la banca
             baraja = new Baraja();
-            jugador = new ManoJugador();
+            jugador = new Jugador(1000);  // Saldo inicial de 1000
             banca = new ManoJugador();
-
+            ActualizarSaldo();
             IniciarJuego();
         }
 
         private void IniciarJuego()
         {
             baraja = new Baraja();
-            jugador = new ManoJugador();
+            jugador.Cartas.Clear();
             banca = new ManoJugador();
 
-            // Repartir dos cartas al jugador y a la banca
+            // Reiniciar la apuesta actual al iniciar un nuevo juego
+            jugador.ApuestaActual = 0;
+
             jugador.PedirCarta(baraja.RepartirCarta());
             jugador.PedirCarta(baraja.RepartirCarta());
             banca.PedirCarta(baraja.RepartirCarta());
@@ -45,10 +46,11 @@ namespace BlackjackForm
             MostrarCartas();
         }
 
+
         private void MostrarCartas()
         {
-            lblCartasJugador.Text = "Cartas del Jugador: " ;
-            lblCartasBanca.Text = "Cartas de la Banca: " ;
+            lblCartasJugador.Text = "Cartas del Jugador: ";
+            lblCartasBanca.Text = "Cartas de la Banca: ";
             lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
 
             // Mostrar las cartas del jugador
@@ -57,7 +59,6 @@ namespace BlackjackForm
             // Mostrar ambas cartas de la banca, pero la segunda como dorso
             MostrarImagenesCartas(banca.Cartas, panelCartasBanca, mostrarDorso: true);
         }
-
 
         private void MostrarImagenesCartas(List<Carta> cartas, FlowLayoutPanel panel, bool mostrarDorso = false)
         {
@@ -68,14 +69,12 @@ namespace BlackjackForm
                 PictureBox pictureBox = new PictureBox();
                 pictureBox.Size = new Size(100, 150);
 
-                
                 if (mostrarDorso && i == 1)
                 {
                     pictureBox.Image = CargarImagenDorso();
                 }
                 else
                 {
-                    // Mostrar la carta normalmente
                     pictureBox.Image = CargarImagenCarta(cartas[i]);
                 }
 
@@ -117,22 +116,26 @@ namespace BlackjackForm
 
         private void btnPedirCarta_Click(object sender, EventArgs e)
         {
+            if (jugador.ApuestaActual <= 0)
+            {
+                MessageBox.Show("necesitas apostar antes de pedir una carta");
+                return;
+            }
             jugador.PedirCarta(baraja.RepartirCarta());
             MostrarCartas();
             jugador.OrdenarCartas();
             int valorJugador = jugador.CalcularValor();
+
             if (valorJugador > 21)
             {
-                MostrarCartasFinal();
                 MessageBox.Show("¡Te pasaste de 21! La banca gana.");
-                IniciarJuego();
-                
+                FinalizarRonda(false);  // El jugador pierde la apuesta
             }
         }
 
+
         private void btnRetirarse_Click(object sender, EventArgs e)
         {
-            // Calcular valor de la banca
             int valorBanca = banca.CalcularValor();
             while (valorBanca < 17)
             {
@@ -140,32 +143,90 @@ namespace BlackjackForm
                 valorBanca = banca.CalcularValor();
             }
 
-            // Mostrar todas las cartas de la banca, revelando la carta oculta
             MostrarCartasFinal();
-
-            lblValorBanca.Text = "Valor de la Banca: " + valorBanca;
-            MessageBox.Show("Te has retirado.");
-
             int valorJugador = jugador.CalcularValor();
-            if (valorBanca > 21 || valorJugador > valorBanca)
+
+            bool jugadorGana = valorBanca > 21 || valorJugador > valorBanca;
+            bool empate = valorJugador == valorBanca;
+
+            if (jugadorGana)
             {
                 MessageBox.Show("¡Has ganado!");
+                jugador.GanarApuesta();
             }
-            else if (valorJugador == valorBanca)
+            else if (empate)
             {
                 MessageBox.Show("¡Empate!");
+                jugador.EmpatarApuesta();
             }
             else
             {
                 MessageBox.Show("La banca gana.");
+                jugador.PerderApuesta();
             }
 
-            IniciarJuego();
+            FinalizarRonda(jugadorGana || empate);
         }
+
+
+
+
+
+        private void FinalizarRonda(bool ganador)
+        {
+            if (ganador)
+            {
+                jugador.GanarApuesta(); // Aplica ganancias solo si es ganador
+            }
+            else if (jugador.ApuestaActual > 0)
+            {
+                jugador.PerderApuesta(); // Solo perderá si la apuesta es mayor a cero
+            }
+
+            ActualizarSaldo(); // Actualizar saldo después de cada ronda
+
+            if (jugador.Saldo <= 0)
+            {
+                MessageBox.Show("No tienes saldo suficiente para continuar.");
+                btnPedirCarta.Enabled = false;
+                btnRetirarse.Enabled = false;
+            }
+            else
+            {
+                IniciarJuego();
+            }
+        }
+
+
+
+
+
+        private void btnApostar_Click(object sender, EventArgs e)
+        {
+            // Aquí va la lógica para realizar la apuesta
+            int cantidadApuesta;
+
+            if (!int.TryParse(txtApuesta.Text, out cantidadApuesta) || cantidadApuesta <= 0)
+            {
+                MessageBox.Show("Por favor, ingresa una cantidad válida para apostar.");
+                return;
+            }
+
+            try
+            {
+                jugador.HacerApuesta(cantidadApuesta);
+                ActualizarSaldo();
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
 
         private void MostrarCartasFinal()
         {
-            //muestra el valor de las cartas del jugador en la parte derecha 
+            // Muestra el valor de las cartas del jugador
             lblValorJugador.Text = "Valor del Jugador: " + jugador.CalcularValor();
 
             // Mostrar todas las cartas de la banca, incluyendo la carta oculta
@@ -178,9 +239,28 @@ namespace BlackjackForm
             MostrarImagenesCartas(banca.Cartas, panelCartasBanca);
         }
 
+        private void ActualizarSaldo()
+        {
+            lblSaldo.Text = "Saldo: $" + jugador.Saldo;
+            apuesta.Text = "La apuesta actual es: $" + jugador.ApuestaActual * 2;
+        }
+
+
+        private void txtApuesta_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Permitir solo dígitos y control de retroceso
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             IniciarJuego();
+            ActualizarSaldo();
         }
 
         private void bindingNavigator1_RefreshItems(object sender, EventArgs e)
@@ -190,7 +270,7 @@ namespace BlackjackForm
 
         private void panelCartasJugador_Paint(object sender, PaintEventArgs e)
         {
-           
+
         }
 
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
@@ -217,6 +297,35 @@ namespace BlackjackForm
         {
 
         }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nudApuesta_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblSaldo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnApostar_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
-
