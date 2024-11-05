@@ -15,9 +15,19 @@ namespace BlackjackForm
         public Form1()
         {
             InitializeComponent();
+            this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
 
-            // Imagen de fondo
+
             this.btnApostar.Click += new System.EventHandler(this.btnApostar_Click);
+
+            // Crear carpeta de historial si no existe
+            string rutaCarpetaHistorial = @"D:\Proyecto C#\BlackJack\historial";
+            if (!Directory.Exists(rutaCarpetaHistorial))
+            {
+                Directory.CreateDirectory(rutaCarpetaHistorial);
+            }
+
+            //imagen de fondo
             this.BackgroundImage = Image.FromFile(@"D:\Proyecto C#\BlackJack\imagenes\fondo.jpg");
             this.BackgroundImageLayout = ImageLayout.Stretch;
 
@@ -29,6 +39,10 @@ namespace BlackjackForm
             IniciarJuego();
         }
 
+        private string rutaHistorial;  // Ruta del archivo de historial
+
+        private StreamWriter writer;  // StreamWriter para el historial de la partida
+
         private void IniciarJuego()
         {
             baraja = new Baraja();
@@ -38,6 +52,17 @@ namespace BlackjackForm
             // Reiniciar la apuesta actual al iniciar un nuevo juego
             jugador.ApuestaActual = 0;
 
+            // Si el archivo de historial no ha sido creado aún, crear uno nuevo
+            if (writer == null)
+            {
+                string rutaArchivo = Path.Combine(@"D:\Proyecto C#\BlackJack\historial",
+                                                  $"partida_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
+                writer = new StreamWriter(rutaArchivo, true);
+                writer.WriteLine($"Fecha de inicio: {DateTime.Now}");
+                writer.WriteLine($"Saldo inicial: {jugador.Saldo}");
+                writer.WriteLine("--------------------------------------------------");
+            }
+
             jugador.PedirCarta(baraja.RepartirCarta());
             jugador.PedirCarta(baraja.RepartirCarta());
             banca.PedirCarta(baraja.RepartirCarta());
@@ -45,6 +70,7 @@ namespace BlackjackForm
 
             MostrarCartas();
         }
+
 
 
         private void MostrarCartas()
@@ -121,10 +147,15 @@ namespace BlackjackForm
                 MessageBox.Show("necesitas apostar antes de pedir una carta");
                 return;
             }
+
             jugador.PedirCarta(baraja.RepartirCarta());
             MostrarCartas();
             jugador.OrdenarCartas();
             int valorJugador = jugador.CalcularValor();
+
+            // Registrar en el historial que pidió una carta
+            writer.WriteLine("El jugador pidió una carta.");
+            writer.WriteLine($"Cartas actuales: {string.Join(", ", jugador.Cartas)}");
 
             if (valorJugador > 21)
             {
@@ -169,9 +200,6 @@ namespace BlackjackForm
         }
 
 
-
-
-
         private void FinalizarRonda(bool ganador)
         {
             if (ganador)
@@ -185,11 +213,22 @@ namespace BlackjackForm
 
             ActualizarSaldo(); // Actualizar saldo después de cada ronda
 
+            // Registrar el resultado de la ronda en el historial
+            writer.WriteLine($"Cartas actuales: {string.Join(", ", jugador.Cartas)}");
+            writer.WriteLine($"Resultado de la ronda: {(ganador ? "Ganó" : "Perdió")}");
+            writer.WriteLine($"Saldo después de la ronda: ${jugador.Saldo}");
+            writer.WriteLine("--------------------------------------------------");
+
             if (jugador.Saldo <= 0)
             {
                 MessageBox.Show("No tienes saldo suficiente para continuar.");
                 btnPedirCarta.Enabled = false;
                 btnRetirarse.Enabled = false;
+
+                // Cerrar el archivo de historial al terminar la partida
+                writer.WriteLine("Juego terminado: saldo insuficiente.");
+                writer.Close();
+                writer = null; // Reiniciar el writer para futuras partidas
             }
             else
             {
@@ -197,13 +236,8 @@ namespace BlackjackForm
             }
         }
 
-
-
-
-
         private void btnApostar_Click(object sender, EventArgs e)
         {
-            // Aquí va la lógica para realizar la apuesta
             int cantidadApuesta;
 
             if (!int.TryParse(txtApuesta.Text, out cantidadApuesta) || cantidadApuesta <= 0)
@@ -216,12 +250,16 @@ namespace BlackjackForm
             {
                 jugador.HacerApuesta(cantidadApuesta);
                 ActualizarSaldo();
+
+                // Registrar en el historial la apuesta
+                writer.WriteLine($"Apuesta realizada: ${cantidadApuesta}");
             }
             catch (InvalidOperationException ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+
 
 
         private void MostrarCartasFinal()
@@ -244,6 +282,17 @@ namespace BlackjackForm
             lblSaldo.Text = "Saldo: $" + jugador.Saldo;
             apuesta.Text = "La apuesta actual es: $" + jugador.ApuestaActual * 2;
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Cerrar el archivo de historial si está abierto
+            if (writer != null)
+            {
+                writer.WriteLine("Juego terminado: cierre de la aplicación.");
+                writer.Close();
+            }
+        }
+
 
 
         private void txtApuesta_KeyPress(object sender, KeyPressEventArgs e)

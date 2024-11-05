@@ -175,7 +175,7 @@
             this.apuesta.BackColor = System.Drawing.Color.Transparent;
             this.apuesta.Font = new System.Drawing.Font("Microsoft Sans Serif", 28.25F);
             this.apuesta.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.apuesta.Location = new System.Drawing.Point(948, 69);
+            this.apuesta.Location = new System.Drawing.Point(876, 70);
             this.apuesta.Name = "apuesta";
             this.apuesta.Size = new System.Drawing.Size(266, 44);
             this.apuesta.TabIndex = 13;
