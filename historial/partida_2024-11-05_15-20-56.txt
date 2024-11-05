@@ -1,0 +1,72 @@
+Apuesta realizada: $200
+El jugador pidió una carta.
+Cartas actuales: Q de Diamantes, 5 de Picas, 2 de Treboles
+El jugador pidió una carta.
+Cartas actuales: Q de Diamantes, 5 de Picas, 3 de Picas, 2 de Treboles
+Cartas actuales: Q de Diamantes, 5 de Picas, 3 de Picas, 2 de Treboles
+Resultado de la ronda: Perdió
+Saldo después de la ronda: $800
+--------------------------------------------------
+Apuesta realizada: $200
+El jugador pidió una carta.
+Cartas actuales: 9 de Treboles, 9 de Corazones, 2 de Corazones
+Cartas actuales: 9 de Treboles, 9 de Corazones, 2 de Corazones
+Resultado de la ronda: Ganó
+Saldo después de la ronda: $1000
+--------------------------------------------------
+Apuesta realizada: $1000
+Cartas actuales: A de Corazones, Q de Corazones
+Resultado de la ronda: Ganó
+Saldo después de la ronda: $2000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: 9 de Corazones, 2 de Diamantes, 2 de Corazones
+El jugador pidió una carta.
+Cartas actuales: Q de Diamantes, 9 de Corazones, 2 de Diamantes, 2 de Corazones
+Cartas actuales: Q de Diamantes, 9 de Corazones, 2 de Diamantes, 2 de Corazones
+Resultado de la ronda: Perdió
+Saldo después de la ronda: $1000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: J de Picas, 7 de Treboles, 3 de Diamantes
+Cartas actuales: J de Picas, 7 de Treboles, 3 de Diamantes
+Resultado de la ronda: Ganó
+Saldo después de la ronda: $2000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: 7 de Corazones, 7 de Diamantes, 4 de Diamantes
+Cartas actuales: 7 de Corazones, 7 de Diamantes, 4 de Diamantes
+Resultado de la ronda: Ganó
+Saldo después de la ronda: $3000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: 7 de Treboles, 3 de Corazones, 2 de Corazones
+El jugador pidió una carta.
+Cartas actuales: 7 de Treboles, 4 de Corazones, 3 de Corazones, 2 de Corazones
+El jugador pidió una carta.
+Cartas actuales: J de Corazones, 7 de Treboles, 4 de Corazones, 3 de Corazones, 2 de Corazones
+Cartas actuales: J de Corazones, 7 de Treboles, 4 de Corazones, 3 de Corazones, 2 de Corazones
+Resultado de la ronda: Perdió
+Saldo después de la ronda: $2000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: K de Corazones, 3 de Picas, 2 de Treboles
+El jugador pidió una carta.
+Cartas actuales: K de Corazones, Q de Corazones, 3 de Picas, 2 de Treboles
+Cartas actuales: K de Corazones, Q de Corazones, 3 de Picas, 2 de Treboles
+Resultado de la ronda: Perdió
+Saldo después de la ronda: $1000
+--------------------------------------------------
+Apuesta realizada: $1000
+El jugador pidió una carta.
+Cartas actuales: 10 de Treboles, 8 de Picas, 2 de Treboles
+Cartas actuales: 10 de Treboles, 8 de Picas, 2 de Treboles
+Resultado de la ronda: Perdió
+Saldo después de la ronda: $0
+--------------------------------------------------
+Juego terminado: saldo insuficiente.

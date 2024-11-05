@@ -8,27 +8,34 @@ namespace BlackjackForm
 {
     public partial class Form1 : Form
     {
+
         private Baraja baraja;
         private Jugador jugador;  
         private ManoJugador banca;
+
 
         public Form1()
         {
             InitializeComponent();
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
-
-
             this.btnApostar.Click += new System.EventHandler(this.btnApostar_Click);
 
             // Crear carpeta de historial si no existe
-            string rutaCarpetaHistorial = @"D:\Proyecto C#\BlackJack\historial";
+            // string rutaBase = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\imagenes");
+            string rutaCarpetaHistorial = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\historial");
             if (!Directory.Exists(rutaCarpetaHistorial))
             {
                 Directory.CreateDirectory(rutaCarpetaHistorial);
             }
 
+            string rutaArchivo = Path.Combine(rutaCarpetaHistorial, $"partida_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
+            writer = new StreamWriter(rutaArchivo, true);
+
             //imagen de fondo
-            this.BackgroundImage = Image.FromFile(@"D:\Proyecto C#\BlackJack\imagenes\fondo.jpg");
+            string rutaBase = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\imagenes");
+            this.BackgroundImage = Image.FromFile(Path.Combine(rutaBase, "fondo.jpg"));
+
+
             this.BackgroundImageLayout = ImageLayout.Stretch;
 
             // Inicializar la baraja y las manos del jugador y la banca
@@ -111,7 +118,7 @@ namespace BlackjackForm
 
         private Image CargarImagenDorso()
         {
-            string rutaDorso = Path.Combine(@"D:\Proyecto C#\BlackJack\imagenes", "Dorso.jpg");
+            string rutaDorso = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\imagenes\Dorso.jpg");
 
             if (File.Exists(rutaDorso))
             {
@@ -119,15 +126,15 @@ namespace BlackjackForm
             }
             else
             {
-                MessageBox.Show($"Imagen del dorso no encontrada: Dorso.jpg");
+                MessageBox.Show("Imagen del dorso no encontrada: Dorso.jpg");
                 return null;
             }
         }
 
         private Image CargarImagenCarta(Carta carta)
         {
-            string nombreArchivo = $"{carta.Valor}_de_{carta.Palo}.jpg";
-            string rutaImagen = Path.Combine(@"D:\Proyecto C#\BlackJack\imagenes", nombreArchivo);
+            string rutaImagen = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\imagenes", $"{carta.Valor}_de_{carta.Palo}.jpg");
+            
 
             if (File.Exists(rutaImagen))
             {
@@ -135,7 +142,7 @@ namespace BlackjackForm
             }
             else
             {
-                MessageBox.Show($"Imagen no encontrada: {nombreArchivo}");
+                MessageBox.Show($"Imagen no encontrada: {carta.Valor}_de_{carta.Palo}.jpg");
                 return null;
             }
         }
@@ -163,7 +170,6 @@ namespace BlackjackForm
                 FinalizarRonda(false);  // El jugador pierde la apuesta
             }
         }
-
 
         private void btnRetirarse_Click(object sender, EventArgs e)
         {
@@ -198,7 +204,6 @@ namespace BlackjackForm
 
             FinalizarRonda(jugadorGana || empate);
         }
-
 
         private void FinalizarRonda(bool ganador)
         {
@@ -260,8 +265,6 @@ namespace BlackjackForm
             }
         }
 
-
-
         private void MostrarCartasFinal()
         {
             // Muestra el valor de las cartas del jugador
@@ -293,8 +296,6 @@ namespace BlackjackForm
             }
         }
 
-
-
         private void txtApuesta_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Permitir solo dígitos y control de retroceso
@@ -303,8 +304,6 @@ namespace BlackjackForm
                 e.Handled = true;
             }
         }
-
-
 
         private void Form1_Load(object sender, EventArgs e)
         {

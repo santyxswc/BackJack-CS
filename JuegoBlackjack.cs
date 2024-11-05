@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 public class Carta
@@ -72,7 +73,6 @@ public class Baraja
         return null;
     }
 }
-
 
 public class Jugador
 {
@@ -157,9 +157,6 @@ public class Jugador
     }
 }
 
-
-
-
 public class ManoJugador
 {
     public List<Carta> Cartas { get; }
@@ -208,7 +205,7 @@ public class ManoJugador
 
     public string ObtenerRutaImagen(Carta carta)
     {
-        string rutaBase = @"D:\Proyecto C#\BlackJack\imagenes";
+        string rutaBase = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\imagenes");
         return System.IO.Path.Combine(rutaBase, $"{carta.Valor}_de_{carta.Palo}.jpg");
     }
 }
