@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BlackJack.Properties
+namespace BlackjackForm.Properties
 {
 
 

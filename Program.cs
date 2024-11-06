@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BlackjackForm; 
 
-namespace BlackJack
+namespace BlackjackForm
 {
     internal static class Program
     {
