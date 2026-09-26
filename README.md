@@ -17,7 +17,6 @@ Funciona en **Windows y Linux** (y macOS). Está hecho en **C# / .NET 10** con *
 4. Cómo se juega
 5. Datos guardados
 6. Arquitectura
-7. Documentación del código (Doxygen)
 
 ---
 
@@ -152,19 +151,6 @@ BlackJack-CS/
 Las reglas están separadas de la interfaz: `MesaBlackjack` no sabe nada de ventanas ni botones, y la mesa
 (`MainWindow`) solo le pide jugadas y dibuja el resultado. Así las reglas se pueden probar con barajas en un
 orden fijo (`Baraja(IEnumerable<Carta>)`), sin abrir el juego.
-
----
-
-## 7. Documentación del código (Doxygen)
-
-El código está documentado con comentarios Doxygen (`@file`, `@brief`, `@param`, `@return`, `@exception`).
-Para generar la documentación HTML:
-
-```bash
-doxygen            # usa el Doxyfile de la raíz
-```
-
-El resultado queda en `docs/html/index.html` (esta carpeta no se sube al repositorio).
 
 ---
 
