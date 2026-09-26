@@ -11,6 +11,12 @@ namespace BlackjackForm
         private List<Carta> cartas;
         private Random random = new Random();
 
+        // Baraja con un orden fijo, sin mezclar (util para pruebas)
+        public Baraja(IEnumerable<Carta> cartasEnOrden)
+        {
+            cartas = new List<Carta>(cartasEnOrden);
+        }
+
         public Baraja()
         {
             cartas = new List<Carta>();

@@ -35,6 +35,50 @@ El proyecto implementa la lógica completa del juego (reparto de cartas, cálcul
 
 4. Compila y ejecuta el proyecto (`F5` o botón de Inicio).
 
+### Ejecutar en Linux / macOS (Avalonia)
+
+El proyecto original usa Windows Forms (.NET Framework 4.7.2) y solo corre en Windows.
+`BlackJack.Avalonia/` es la versión multiplataforma hecha con [Avalonia](https://avaloniaui.net/):
+comparte `Carta.cs`, `Baraja.cs`, `JuegoBlackjack.cs` y la carpeta `imagenes/`, y funciona en Linux, macOS y Windows.
+
+Requisito: [.NET 10 SDK](https://dotnet.microsoft.com/).
+
+```bash
+dotnet run --project BlackJack.Avalonia
+```
+
+#### Cuentas de jugador
+
+- Al abrir el juego se inicia sesión o se crea una cuenta (las cuentas nuevas empiezan con $1000).
+- El saldo y las estadísticas (ganadas, perdidas, empates) se guardan después de cada apuesta y cada ronda.
+- Las contraseñas se guardan con hash PBKDF2-SHA256 y sal, nunca en texto plano.
+- Si cierras la ventana en medio de una mano, el jugador se planta automáticamente.
+- Con saldo $0 aparece el botón "Recargar $1000".
+
+Los datos se guardan en `~/.local/share/BlackJack/` (Linux), `%LOCALAPPDATA%\BlackJack\` (Windows)
+o `~/Library/Application Support/BlackJack/` (macOS):
+
+- `jugadores.json`: cuentas, saldo y estadísticas.
+- `historial/`: un archivo de texto por sesión con cada apuesta, carta y resultado.
+
+#### Reglas implementadas (versión Avalonia)
+
+- Primero se apuesta y después se reparten las cartas.
+- Blackjack natural (21 con dos cartas) paga 3:2; si ambos lo tienen es empate.
+- La banca revisa si tiene blackjack antes del turno del jugador.
+- Doblar: solo con las dos primeras cartas; se duplica la apuesta y se recibe una sola carta.
+- La banca pide carta hasta 17 y se planta con 17 suave.
+- Ganar paga 1:1 y el empate devuelve la apuesta.
+
+#### Controles
+
+| Acción | Ratón | Teclado |
+|---|---|---|
+| Apostar | Fichas + "Apostar" | Escribir la cantidad + `Enter` (Enter repite la última apuesta) |
+| Pedir carta | "Pedir carta" | `P` |
+| Plantarse | "Plantarse" | `S` |
+| Doblar | "Doblar" | `D` |
+
 ## Modo de Juego
 
 1. Al iniciar la aplicación, presiona el botón para repartir las cartas iniciales.

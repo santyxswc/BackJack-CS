@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BlackjackAvalonia</RootNamespace>
+  </PropertyGroup>
+
+  <!-- La logica del juego se comparte con el proyecto Windows Forms -->
+  <ItemGroup>
+    <Compile Include="..\Carta.cs" Link="Juego\Carta.cs" />
+    <Compile Include="..\Baraja.cs" Link="Juego\Baraja.cs" />
+    <Compile Include="..\JuegoBlackjack.cs" Link="Juego\JuegoBlackjack.cs" />
+    <Content Include="..\imagenes\**" LinkBase="imagenes" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.12" />
+  </ItemGroup>
+
+</Project>

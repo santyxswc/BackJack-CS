@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 
 namespace BlackjackForm {
     public class Jugador
@@ -28,11 +27,24 @@ namespace BlackjackForm {
             {
                 throw new InvalidOperationException("Saldo insuficiente para hacer esa apuesta.");
             }
-            ApuestaActual = cantidad; // Establecer la cantidad de apuesta actual
+            ApuestaActual += cantidad; // Se suma a la apuesta actual (apostar dos veces o doblar no pierde dinero)
             Saldo -= cantidad; // Resta la apuesta del saldo
         }
 
+        public void GanarBlackjack()
+        {
+            Saldo += ApuestaActual + ApuestaActual * 3 / 2; // El blackjack natural paga 3:2
+            ApuestaActual = 0;
+        }
 
+        public void Depositar(int cantidad)
+        {
+            if (cantidad <= 0)
+            {
+                throw new InvalidOperationException("La cantidad a depositar debe ser mayor a cero.");
+            }
+            Saldo += cantidad;
+        }
 
         public void GanarApuesta()
         {

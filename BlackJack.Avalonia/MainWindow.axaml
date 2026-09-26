@@ -1,0 +1,140 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BlackjackAvalonia.MainWindow"
+        Title="BlackJack"
+        Width="1150" Height="820"
+        MinWidth="1000" MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        Background="#2d0a0a"
+        Foreground="White">
+
+    <Window.Styles>
+        <Style Selector="Border.barra">
+            <Setter Property="Background" Value="#E6101418"/>
+        </Style>
+        <Style Selector="Border.mano">
+            <Setter Property="Background" Value="#A6101418"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="22,14,22,18"/>
+        </Style>
+        <Style Selector="TextBlock.tituloMano">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Border.valor">
+            <Setter Property="Background" Value="#f1c40f"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12,3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Border.valor > TextBlock">
+            <Setter Property="Foreground" Value="#2d3436"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style Selector="TextBlock.etiqueta">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="#b2bec3"/>
+            <Setter Property="LetterSpacing" Value="1"/>
+        </Style>
+    </Window.Styles>
+
+    <Panel>
+        <Image x:Name="imgFondo" Stretch="UniformToFill"/>
+
+        <Grid RowDefinitions="Auto,*,Auto">
+
+            <!-- Barra superior: jugador y saldo -->
+            <Border Grid.Row="0" Classes="barra" Padding="28,12">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                    <TextBlock Text="BlackJack" FontSize="28" FontWeight="Bold" Foreground="#f1c40f"
+                               VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,36,0">
+                        <TextBlock Classes="etiqueta" Text="JUGADOR"/>
+                        <TextBlock x:Name="lblUsuario" FontSize="18" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="lblEstadisticas" FontSize="12" Foreground="#b2bec3"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,28,0">
+                        <TextBlock Classes="etiqueta" Text="SALDO"/>
+                        <TextBlock x:Name="lblSaldo" FontSize="28" FontWeight="Bold" Foreground="#f1c40f"/>
+                    </StackPanel>
+
+                    <Button x:Name="btnCerrarSesion" Grid.Column="4" Classes="secundario" Content="Cerrar sesión"
+                            VerticalAlignment="Center" Click="btnCerrarSesion_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Mesa -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="40,16" Spacing="16">
+
+                <Border Classes="mano">
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Classes="tituloMano" Text="Banca"/>
+                            <Border x:Name="bordeValorBanca" Classes="valor">
+                                <TextBlock x:Name="lblValorBanca"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel x:Name="panelCartasBanca" Orientation="Horizontal" Height="140"/>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="bannerMensaje" CornerRadius="10" Padding="24,12" HorizontalAlignment="Center"
+                        BoxShadow="0 4 16 0 #66000000">
+                    <TextBlock x:Name="lblMensaje" FontSize="22" FontWeight="SemiBold" TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </Border>
+
+                <Border Classes="mano">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                            <TextBlock Classes="tituloMano" Text="Tu mano"/>
+                            <Border x:Name="bordeValorJugador" Grid.Column="1" Classes="valor" Margin="12,0,0,0">
+                                <TextBlock x:Name="lblValorJugador"/>
+                            </Border>
+                            <TextBlock x:Name="lblApuestaEnJuego" Grid.Column="3" FontSize="18" FontWeight="SemiBold"
+                                       Foreground="#f1c40f" VerticalAlignment="Center"/>
+                        </Grid>
+                        <StackPanel x:Name="panelCartasJugador" Orientation="Horizontal" Height="140"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Controles -->
+            <Border Grid.Row="2" Classes="barra" Padding="28,16" MinHeight="94">
+                <Panel>
+                    <!-- Fase de apuesta -->
+                    <Grid x:Name="panelApuesta" ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Button Classes="ficha" Background="#0984e3" Content="10" Tag="10" Click="Ficha_Click"/>
+                            <Button Classes="ficha" Background="#00b894" Content="25" Tag="25" Click="Ficha_Click"/>
+                            <Button Classes="ficha" Background="#d63031" Content="50" Tag="50" Click="Ficha_Click"/>
+                            <Button Classes="ficha" Background="#2d3436" Content="100" Tag="100" Click="Ficha_Click"/>
+                            <Button Classes="ficha" Background="#6c5ce7" Content="500" Tag="500" Click="Ficha_Click"/>
+                            <Button Classes="secundario" Content="Limpiar" Margin="8,0,0,0" VerticalAlignment="Center"
+                                    Click="btnLimpiar_Click"/>
+                        </StackPanel>
+
+                        <Button x:Name="btnRecargar" Grid.Column="2" Classes="secundario" Content="Recargar $1000"
+                                Margin="0,0,16,0" VerticalAlignment="Center" Click="btnRecargar_Click"/>
+                        <TextBox x:Name="txtApuesta" Grid.Column="3" Width="170" FontSize="20" MaxLength="9"
+                                 Watermark="Apuesta $" VerticalAlignment="Center"/>
+                        <Button Grid.Column="4" Classes="primario" Content="Apostar  ⏎" Margin="12,0,0,0"
+                                VerticalAlignment="Center" Click="btnApostar_Click"/>
+                    </Grid>
+
+                    <!-- Fase de juego -->
+                    <StackPanel x:Name="panelJuego" Orientation="Horizontal" HorizontalAlignment="Center"
+                                VerticalAlignment="Center" Spacing="16">
+                        <Button Classes="primario" Content="Pedir carta  (P)" Click="btnPedir_Click"/>
+                        <Button Classes="primario" Content="Plantarse  (S)" Click="btnPlantarse_Click"/>
+                        <Button x:Name="btnDoblar" Classes="primario" Content="Doblar  (D)" Click="btnDoblar_Click"/>
+                    </StackPanel>
+                </Panel>
+            </Border>
+        </Grid>
+    </Panel>
+</Window>

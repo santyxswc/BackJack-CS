@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="BlackjackAvalonia.LoginWindow"
+        Title="BlackJack - Iniciar sesión"
+        Width="520" Height="600"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Background="#2d0a0a"
+        Foreground="White">
+    <Panel>
+        <Image x:Name="imgFondo" Stretch="UniformToFill"/>
+
+        <Border Background="#E6101418" CornerRadius="16" Padding="36,32" Width="380"
+                VerticalAlignment="Center" HorizontalAlignment="Center"
+                BoxShadow="0 10 40 0 #AA000000">
+            <StackPanel Spacing="6">
+                <TextBlock Text="BlackJack" FontSize="40" FontWeight="Bold" Foreground="#f1c40f"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Inicia sesión o crea tu cuenta para jugar" Foreground="#b2bec3"
+                           HorizontalAlignment="Center" Margin="0,0,0,18"/>
+
+                <TextBlock Text="Usuario" FontWeight="SemiBold"/>
+                <TextBox x:Name="txtUsuario" Watermark="Tu nombre de jugador" MaxLength="20"/>
+
+                <TextBlock Text="Contraseña" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox x:Name="txtClave" PasswordChar="●" Watermark="Mínimo 4 caracteres"/>
+
+                <Border x:Name="bordeError" Background="#33d63031" BorderBrush="#d63031" BorderThickness="1"
+                        CornerRadius="6" Padding="10,6" Margin="0,10,0,0" IsVisible="False">
+                    <TextBlock x:Name="lblError" Foreground="#ff7675" TextWrapping="Wrap"/>
+                </Border>
+
+                <Button Classes="primario" Content="Entrar" HorizontalAlignment="Stretch" Margin="0,18,0,0"
+                        Click="btnEntrar_Click"/>
+                <Button Classes="secundario" Content="Crear cuenta nueva" HorizontalAlignment="Stretch" Margin="0,4,0,0"
+                        Click="btnCrear_Click"/>
+
+                <TextBlock Text="Las cuentas nuevas empiezan con $1000" FontSize="12" Foreground="#b2bec3"
+                           HorizontalAlignment="Center" Margin="0,12,0,0"/>
+            </StackPanel>
+        </Border>
+    </Panel>
+</Window>

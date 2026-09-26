@@ -1,0 +1,100 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="BlackjackAvalonia.App"
+             RequestedThemeVariant="Light">
+    <Application.Styles>
+        <FluentTheme/>
+
+        <!-- Boton principal (dorado) -->
+        <Style Selector="Button.primario">
+            <Setter Property="Background" Value="#f1c40f"/>
+            <Setter Property="Foreground" Value="#2d3436"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="22,11"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.primario:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#f39c12"/>
+            <Setter Property="Foreground" Value="#2d3436"/>
+        </Style>
+        <Style Selector="Button.primario:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#e67e22"/>
+            <Setter Property="Foreground" Value="#2d3436"/>
+        </Style>
+        <Style Selector="Button.primario:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#636e72"/>
+            <Setter Property="Foreground" Value="#b2bec3"/>
+        </Style>
+
+        <!-- Boton secundario (translucido) -->
+        <Style Selector="Button.secundario">
+            <Setter Property="Background" Value="#33FFFFFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.secundario:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#55FFFFFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="White"/>
+        </Style>
+        <Style Selector="Button.secundario:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#77FFFFFF"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.secundario:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#22FFFFFF"/>
+            <Setter Property="Foreground" Value="#88FFFFFF"/>
+        </Style>
+
+        <!-- Fichas de apuesta -->
+        <Style Selector="Button.ficha">
+            <Setter Property="Width" Value="58"/>
+            <Setter Property="Height" Value="58"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransform" Value="scale(1)"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                </Transitions>
+            </Setter>
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="29" BorderBrush="White" BorderThickness="3"
+                            BoxShadow="0 3 8 0 #88000000">
+                        <Border CornerRadius="23" BorderBrush="#88FFFFFF" BorderThickness="2" Margin="3">
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.ficha:pointerover">
+            <Setter Property="RenderTransform" Value="scale(1.1)"/>
+        </Style>
+        <Style Selector="Button.ficha:pressed">
+            <Setter Property="RenderTransform" Value="scale(0.95)"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,9"/>
+        </Style>
+    </Application.Styles>
+</Application>
