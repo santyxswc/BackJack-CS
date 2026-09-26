@@ -45,7 +45,6 @@
 
         <Grid RowDefinitions="Auto,*,Auto">
 
-            <!-- Barra superior: jugador y saldo -->
             <Border Grid.Row="0" Classes="barra" Padding="28,12">
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                     <TextBlock Text="BlackJack" FontSize="28" FontWeight="Bold" Foreground="#f1c40f"
@@ -67,7 +66,6 @@
                 </Grid>
             </Border>
 
-            <!-- Mesa -->
             <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="40,16" Spacing="16">
 
                 <Border Classes="mano">
@@ -103,10 +101,8 @@
                 </Border>
             </StackPanel>
 
-            <!-- Controles -->
             <Border Grid.Row="2" Classes="barra" Padding="28,16" MinHeight="94">
                 <Panel>
-                    <!-- Fase de apuesta -->
                     <Grid x:Name="panelApuesta" ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                             <Button Classes="ficha" Background="#0984e3" Content="10" Tag="10" Click="Ficha_Click"/>
@@ -126,7 +122,6 @@
                                 VerticalAlignment="Center" Click="btnApostar_Click"/>
                     </Grid>
 
-                    <!-- Fase de juego -->
                     <StackPanel x:Name="panelJuego" Orientation="Horizontal" HorizontalAlignment="Center"
                                 VerticalAlignment="Center" Spacing="16">
                         <Button Classes="primario" Content="Pedir carta  (P)" Click="btnPedir_Click"/>

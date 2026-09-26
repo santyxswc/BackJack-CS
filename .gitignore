@@ -8,3 +8,8 @@
 ## Build outputs
 bin/
 obj/
+
+## Documentacion generada por Doxygen
+docs/html/
+docs/latex/
+docs/doxygen-advertencias.log

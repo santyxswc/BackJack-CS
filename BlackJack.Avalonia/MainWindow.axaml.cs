@@ -1,3 +1,8 @@
+/**
+ * @file MainWindow.axaml.cs
+ * @brief Mesa de juego.
+ * @author Santiago Caicedo
+ */
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -7,23 +12,40 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using BlackjackAvalonia.Datos;
 using BlackjackAvalonia.Juego;
-using BlackjackForm;
 
 namespace BlackjackAvalonia
 {
+    /**
+     * @brief Mesa de blackjack: apuestas, cartas, resultados y saldo del jugador.
+     */
     public partial class MainWindow : Window
     {
+        /** Tipos de mensaje del aviso central (definen su color). */
         private enum TipoMensaje { Info, Victoria, Blackjack, Empate, Derrota, Error }
 
+        /** Cuenta del jugador. */
         private readonly CuentaJugador cuenta;
+        /** Donde se guarda la cuenta. */
         private readonly RepositorioJugadores repositorio;
+        /** Reglas y estado de la ronda. */
         private readonly MesaBlackjack mesa;
+        /** Historial de la sesión. */
         private readonly Historial historial;
 
+        /**
+         * @brief Crea una mesa de prueba con una cuenta de invitado.
+         */
         public MainWindow() : this(new CuentaJugador { Usuario = "invitado", Saldo = RepositorioJugadores.SaldoInicial }, new RepositorioJugadores())
         {
         }
 
+        /**
+         * @brief Crea la mesa de un jugador.
+         * @param cuenta Cuenta del jugador
+         * @param repositorio Donde se guarda la cuenta
+         *
+         * En el campo de apuesta solo se aceptan dígitos y Enter hace la apuesta.
+         */
         public MainWindow(CuentaJugador cuenta, RepositorioJugadores repositorio)
         {
             InitializeComponent();
@@ -36,7 +58,6 @@ namespace BlackjackAvalonia
             Title = $"BlackJack - {cuenta.Usuario}";
             imgFondo.Source = Recursos.Fondo;
 
-            // Solo digitos en la apuesta; Enter apuesta
             txtApuesta.AddHandler(TextInputEvent, (_, e) =>
             {
                 if (e.Text != null && !e.Text.All(char.IsDigit)) e.Handled = true;
@@ -55,8 +76,9 @@ namespace BlackjackAvalonia
             Refrescar();
         }
 
-        // ---------- Acciones ----------
-
+        /**
+         * @brief Apuesta la cantidad escrita y reparte las cartas.
+         */
         private void Apostar()
         {
             if (mesa.Fase != FaseJuego.Apuesta) return;
@@ -81,7 +103,7 @@ namespace BlackjackAvalonia
 
             historial.Escribir($"Apuesta realizada: ${cantidad}");
             historial.Escribir($"Cartas del jugador: {string.Join(", ", mesa.Jugador.Cartas)}");
-            Guardar(); // La apuesta ya salio del saldo
+            Guardar();
 
             if (mesa.Fase == FaseJuego.TurnoJugador)
                 MostrarMensaje("¿Pides carta, te plantas o doblas?", TipoMensaje.Info);
@@ -89,6 +111,11 @@ namespace BlackjackAvalonia
             DespuesDeJugada();
         }
 
+        /**
+         * @brief Ejecuta una jugada del turno y la registra.
+         * @param accion Jugada (pedir, plantarse o doblar)
+         * @param descripcion Texto para el historial
+         */
         private void Jugar(Action accion, string descripcion)
         {
             if (mesa.Fase != FaseJuego.TurnoJugador) return;
@@ -108,6 +135,9 @@ namespace BlackjackAvalonia
             DespuesDeJugada();
         }
 
+        /**
+         * @brief Si la ronda terminó, registra y muestra el resultado; luego actualiza la mesa.
+         */
         private void DespuesDeJugada()
         {
             if (mesa.Fase == FaseJuego.Apuesta && mesa.Resultado.HasValue)
@@ -118,6 +148,9 @@ namespace BlackjackAvalonia
             Refrescar();
         }
 
+        /**
+         * @brief Actualiza las estadísticas, escribe el historial y guarda la cuenta.
+         */
         private void RegistrarResultado()
         {
             switch (mesa.Resultado)
@@ -142,6 +175,9 @@ namespace BlackjackAvalonia
             Guardar();
         }
 
+        /**
+         * @brief Muestra el resultado de la ronda en el aviso central.
+         */
         private void MostrarResultado()
         {
             int jugador = MesaBlackjack.Valor(mesa.Jugador.Cartas).Total;
@@ -179,6 +215,9 @@ namespace BlackjackAvalonia
                 lblMensaje.Text += "\nTe quedaste sin saldo: usa \"Recargar $1000\".";
         }
 
+        /**
+         * @brief Guarda el saldo y las estadísticas de la cuenta.
+         */
         private void Guardar()
         {
             cuenta.Saldo = mesa.Jugador.Saldo;
@@ -192,7 +231,9 @@ namespace BlackjackAvalonia
             }
         }
 
-        // Si se cierra en medio de una mano, el jugador se planta con lo que tiene
+        /**
+         * @brief Al cerrar la ventana en medio de una mano, el jugador se planta; luego se guarda todo.
+         */
         private void AlCerrar()
         {
             if (mesa.Fase == FaseJuego.TurnoJugador)
@@ -207,8 +248,9 @@ namespace BlackjackAvalonia
             historial.Dispose();
         }
 
-        // ---------- Interfaz ----------
-
+        /**
+         * @brief Actualiza saldo, cartas, valores y botones según la fase de la ronda.
+         */
         private void Refrescar()
         {
             var jugador = mesa.Jugador;
@@ -221,7 +263,6 @@ namespace BlackjackAvalonia
             MostrarCartas(panelCartasJugador, jugador.Cartas, ocultarSegunda: false);
             MostrarCartas(panelCartasBanca, mesa.Banca.Cartas, ocultarSegunda: mesa.OcultarCartaBanca);
 
-            // Los dos valores de una mano suave ("7/17") solo se muestran mientras el jugador decide
             MostrarValor(bordeValorJugador, lblValorJugador, jugador.Cartas, mostrarSuave: jugando);
             if (mesa.OcultarCartaBanca)
                 MostrarValor(bordeValorBanca, lblValorBanca, mesa.Banca.Cartas.Take(1), mostrarSuave: false, sufijo: " + ?");
@@ -239,6 +280,12 @@ namespace BlackjackAvalonia
             if (!jugando) EnfocarApuesta();
         }
 
+        /**
+         * @brief Dibuja las cartas de una mano.
+         * @param panel Panel donde se dibujan
+         * @param cartas Cartas
+         * @param ocultarSegunda true para mostrar la segunda carta boca abajo
+         */
         private static void MostrarCartas(Panel panel, List<Carta> cartas, bool ocultarSegunda)
         {
             panel.Children.Clear();
@@ -249,7 +296,14 @@ namespace BlackjackAvalonia
             }
         }
 
-        // Las cartas se superponen como un abanico, dejando visible la esquina con el valor
+        /**
+         * @brief Crea el control de una carta con sombra y esquinas redondeadas.
+         * @param imagen Imagen de la carta
+         * @param primera true si es la primera de la mano
+         * @return Control de la carta
+         *
+         * Las cartas se superponen como un abanico, dejando visible la esquina con el valor.
+         */
         private static Control CrearCarta(Bitmap imagen, bool primera) => new Border
         {
             Width = 100,
@@ -266,6 +320,14 @@ namespace BlackjackAvalonia
             }
         };
 
+        /**
+         * @brief Muestra el valor de una mano.
+         * @param borde Etiqueta del valor
+         * @param etiqueta Texto del valor
+         * @param cartas Cartas visibles
+         * @param mostrarSuave true para mostrar las dos opciones de una mano suave ("7/17")
+         * @param sufijo Texto al final, como " + ?" para la carta oculta de la banca
+         */
         private static void MostrarValor(Border borde, TextBlock etiqueta, IEnumerable<Carta> cartas, bool mostrarSuave, string sufijo = "")
         {
             var lista = cartas.ToList();
@@ -275,6 +337,11 @@ namespace BlackjackAvalonia
             etiqueta.Text = (mostrarSuave && suave && total < 21 ? $"{total - 10}/{total}" : total.ToString()) + sufijo;
         }
 
+        /**
+         * @brief Muestra un mensaje en el aviso central.
+         * @param texto Mensaje
+         * @param tipo Tipo, que define el color
+         */
         private void MostrarMensaje(string texto, TipoMensaje tipo)
         {
             lblMensaje.Text = texto;
@@ -291,11 +358,17 @@ namespace BlackjackAvalonia
             lblMensaje.Foreground = Brush.Parse(letra);
         }
 
+        /**
+         * @brief Pone el cursor en el campo de apuesta.
+         */
         private void EnfocarApuesta() =>
             Dispatcher.UIThread.Post(() => txtApuesta.Focus(), DispatcherPriority.Input);
 
-        // ---------- Eventos ----------
-
+        /**
+         * @brief Atajos de teclado: P pedir, S plantarse, D doblar y Enter apostar.
+         * @param sender Ventana
+         * @param e Tecla
+         */
         private void Ventana_KeyDown(object sender, KeyEventArgs e)
         {
             if (mesa.Fase == FaseJuego.TurnoJugador)
@@ -314,17 +387,42 @@ namespace BlackjackAvalonia
             }
         }
 
+        /**
+         * @brief Botón Apostar.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnApostar_Click(object sender, RoutedEventArgs e) => Apostar();
 
+        /**
+         * @brief Botón Pedir carta.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnPedir_Click(object sender, RoutedEventArgs e) =>
             Jugar(mesa.PedirCarta, "El jugador pidió una carta.");
 
+        /**
+         * @brief Botón Plantarse.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnPlantarse_Click(object sender, RoutedEventArgs e) =>
             Jugar(mesa.Plantarse, "El jugador se plantó.");
 
+        /**
+         * @brief Botón Doblar.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnDoblar_Click(object sender, RoutedEventArgs e) =>
             Jugar(mesa.Doblar, "El jugador dobló la apuesta.");
 
+        /**
+         * @brief Suma el valor de la ficha a la apuesta, sin pasar del saldo.
+         * @param sender Ficha
+         * @param e Evento
+         */
         private void Ficha_Click(object sender, RoutedEventArgs e)
         {
             int ficha = int.Parse((string)((Button)sender).Tag);
@@ -334,12 +432,22 @@ namespace BlackjackAvalonia
             EnfocarApuesta();
         }
 
+        /**
+         * @brief Borra la apuesta escrita.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtApuesta.Text = "";
             EnfocarApuesta();
         }
 
+        /**
+         * @brief Recarga el saldo inicial cuando el jugador se queda sin dinero.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnRecargar_Click(object sender, RoutedEventArgs e)
         {
             mesa.Jugador.Depositar(RepositorioJugadores.SaldoInicial);
@@ -349,6 +457,11 @@ namespace BlackjackAvalonia
             Refrescar();
         }
 
+        /**
+         * @brief Cierra la sesión y vuelve al inicio de sesión.
+         * @param sender Botón
+         * @param e Evento
+         */
         private void btnCerrarSesion_Click(object sender, RoutedEventArgs e) =>
             App.CambiarVentana(this, new LoginWindow(repositorio));
     }
