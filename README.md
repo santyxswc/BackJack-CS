@@ -1,5 +1,7 @@
 # BlackJack
 
+[![CI](https://github.com/santyxswc/BackJack-CS/actions/workflows/ci.yml/badge.svg)](https://github.com/santyxswc/BackJack-CS/actions/workflows/ci.yml)
+
 Juego de Blackjack de escritorio contra la banca, con **cuentas de jugador** que guardan el saldo y las
 estadísticas entre partidas.
 
@@ -17,6 +19,7 @@ Funciona en **Windows y Linux** (y macOS). Está hecho en **C# / .NET 10** con *
 4. Cómo se juega
 5. Datos guardados
 6. Arquitectura
+7. Pruebas
 
 ---
 
@@ -60,7 +63,7 @@ Requisito: [.NET 10 SDK](https://dotnet.microsoft.com/download).
 ```bash
 git clone https://github.com/santyxswc/BlackJack-CS.git
 cd BlackJack-CS
-dotnet run --project BlackJack.Avalonia
+dotnet run --project src/BlackJack.Desktop
 ```
 
 ### Publicar un ejecutable
@@ -69,10 +72,10 @@ Genera un ejecutable que incluye .NET, así el equipo donde se juegue no necesit
 
 ```bash
 # Windows (genera BlackJack.exe)
-dotnet publish BlackJack.Avalonia -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publicado/windows
+dotnet publish src/BlackJack.Desktop -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publicado/windows
 
 # Linux (genera BlackJack)
-dotnet publish BlackJack.Avalonia -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publicado/linux
+dotnet publish src/BlackJack.Desktop -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publicado/linux
 ```
 
 Se puede generar cualquiera de los dos desde Windows o desde Linux. Hay que entregar la **carpeta completa**:
@@ -126,31 +129,57 @@ Los datos se guardan en la carpeta de datos del usuario:
 
 ## 6. Arquitectura
 
-```
-BlackJack-CS/
-├── BlackJack.Avalonia/
-│   ├── Juego/                   Reglas del juego (sin interfaz gráfica)
-│   │   ├── MesaBlackjack.cs     Controla la ronda: apuesta, reparto, turnos y pagos
-│   │   ├── Jugador.cs           Mano, saldo y apuesta del jugador
-│   │   ├── ManoJugador.cs       Mano de la banca
-│   │   ├── Baraja.cs            52 cartas mezcladas
-│   │   └── Carta.cs             Valor y palo
-│   ├── Datos/
-│   │   ├── RepositorioJugadores.cs  Cuentas en jugadores.json
-│   │   └── Historial.cs             Archivo de texto de cada sesión
-│   ├── LoginWindow.axaml(.cs)   Inicio de sesión y creación de cuentas
-│   ├── MainWindow.axaml(.cs)    Mesa de juego
-│   ├── Recursos.cs              Carga de imágenes
-│   ├── App.axaml                Estilos (botones, fichas, campos)
-│   └── imagenes/                Cartas, reverso y fondo
-├── docs/capturas/               Capturas de este documento
-├── BlackJack.slnx               Solución
-└── Doxyfile                     Configuración de la documentación
+La solución sigue una arquitectura por capas en la que las dependencias apuntan hacia el dominio:
+
+```mermaid
+flowchart LR
+  Desktop["BlackJack.Desktop<br/>Avalonia · vistas · composición"] --> Core
+  Desktop --> Infrastructure
+  Infrastructure["BlackJack.Infrastructure<br/>JSON · historial · PBKDF2"] --> Core
+  Core["BlackJack.Core<br/>reglas · casos de uso · contratos"]
+  Tests["BlackJack.Core.Tests<br/>xUnit"] --> Core
+  Tests --> Infrastructure
 ```
 
-Las reglas están separadas de la interfaz: `MesaBlackjack` no sabe nada de ventanas ni botones, y la mesa
-(`MainWindow`) solo le pide jugadas y dibuja el resultado. Así las reglas se pueden probar con barajas en un
-orden fijo (`Baraja(IEnumerable<Carta>)`), sin abrir el juego.
+```
+BlackJack-CS/
+├── src/
+│   ├── BlackJack.Core/              Sin dependencias externas: no conoce la interfaz ni el disco
+│   │   ├── Juego/                   Carta, Mano, Baraja, Jugador y MesaBlackjack (reglas)
+│   │   ├── Cuentas/                 CuentaJugador, ServicioCuentas y los contratos
+│   │   │                            IRepositorioCuentas / IHasherClaves
+│   │   └── Sesion/                  SesionJuego (caso de uso) e IHistorialPartida
+│   ├── BlackJack.Infrastructure/    Implementaciones: RepositorioCuentasJson, HasherPbkdf2,
+│   │                                HistorialArchivo y RutasDatos
+│   └── BlackJack.Desktop/           Avalonia: Vistas/, Recursos, App y Navegacion
+│                                    (raíz de composición)
+├── tests/BlackJack.Core.Tests/      Pruebas de reglas, cuentas, sesión e infraestructura
+├── docs/capturas/                   Capturas de este documento
+├── Directory.Build.props            Configuración común (.NET 10, advertencias como errores)
+└── BlackJack.slnx                   Solución
+```
+
+**Decisiones de diseño**
+
+| Principio | Aplicación |
+|---|---|
+| Responsabilidad única | `MesaBlackjack` solo aplica reglas; `SesionJuego` coordina historial, estadísticas y guardado; las ventanas solo dibujan y traducen la entrada del usuario. El antiguo repositorio de jugadores se dividió en reglas de cuentas (`ServicioCuentas`), hashing (`HasherPbkdf2`) y persistencia (`RepositorioCuentasJson`). |
+| Abierto/cerrado | Cambiar el almacenamiento (por ejemplo, a SQLite) es añadir otra implementación de `IRepositorioCuentas`, sin tocar reglas ni vistas. |
+| Sustitución de Liskov | Las pruebas usan un repositorio en memoria, un hasher falso y un historial en memoria en lugar de los reales, sin cambiar el comportamiento de los servicios. |
+| Segregación de interfaces | Contratos pequeños y específicos: buscar/guardar cuentas, derivar/verificar claves, escribir el historial. |
+| Inversión de dependencias | Core define las interfaces e Infrastructure las implementa; `Navegacion` compone el grafo de objetos en un único punto y las vistas reciben sus dependencias por constructor. |
+
+Otras decisiones: las cartas usan tipos (`Rango`, `Palo`) en lugar de cadenas; la baraja y el reloj son inyectables para reproducir partidas en pruebas; `jugadores.json` mantiene su formato, así que las cuentas existentes siguen funcionando.
+
+---
+
+## 7. Pruebas
+
+```bash
+dotnet test
+```
+
+38 pruebas con xUnit cubren el valor de las manos, la tabla de pagos y cada regla de la mesa (blackjack natural, 17 suave, doblar, pasarse), el registro e inicio de sesión, el ciclo de una sesión (estadísticas, historial, guardado y cierre a mitad de mano) y la persistencia real en disco. Las manos se reproducen con barajas en un orden fijo. GitHub Actions compila y ejecuta las pruebas en cada push.
 
 ---
 
