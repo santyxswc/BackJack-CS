@@ -7,7 +7,7 @@
  */
 using Avalonia;
 
-namespace BlackjackAvalonia
+namespace BlackJack.Desktop
 {
     /**
      * @brief Arranque de la aplicación.

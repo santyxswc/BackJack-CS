@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="BlackjackAvalonia.MainWindow"
+        x:Class="BlackJack.Desktop.Vistas.MainWindow"
         Title="BlackJack"
         Width="1150" Height="820"
         MinWidth="1000" MinHeight="720"

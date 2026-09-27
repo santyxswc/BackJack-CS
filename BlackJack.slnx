@@ -1,3 +1,10 @@
 <Solution>
-  <Project Path="BlackJack.Avalonia/BlackJack.Avalonia.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/BlackJack.Core/BlackJack.Core.csproj" />
+    <Project Path="src/BlackJack.Infrastructure/BlackJack.Infrastructure.csproj" />
+    <Project Path="src/BlackJack.Desktop/BlackJack.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BlackJack.Core.Tests/BlackJack.Core.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="BlackjackAvalonia.LoginWindow"
+        x:Class="BlackJack.Desktop.Vistas.LoginWindow"
         Title="BlackJack - Iniciar sesión"
         Width="520" Height="600"
         CanResize="False"

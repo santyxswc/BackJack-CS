@@ -3,7 +3,7 @@
  * @brief Reglas del blackjack.
  * @author Santiago Caicedo
  */
-namespace BlackjackAvalonia.Juego
+namespace BlackJack.Core.Juego
 {
     /**
      * @brief Momento de la ronda.
@@ -38,6 +38,19 @@ namespace BlackjackAvalonia.Juego
     }
 
     /**
+     * @brief Clasificación de un resultado para estadísticas y mensajes.
+     */
+    public static class ResultadoRondaExtensiones
+    {
+        /** true si el jugador gana la ronda. */
+        public static bool EsVictoria(this ResultadoRonda r) =>
+            r is ResultadoRonda.BlackjackJugador or ResultadoRonda.GanaJugador or ResultadoRonda.BancaSePasa;
+
+        /** true si el jugador pierde la ronda. */
+        public static bool EsDerrota(this ResultadoRonda r) => !r.EsVictoria() && r != ResultadoRonda.Empate;
+    }
+
+    /**
      * @brief Controla una ronda de blackjack y aplica las reglas.
      *
      * Reglas implementadas:
@@ -50,6 +63,9 @@ namespace BlackjackAvalonia.Juego
      */
     public class MesaBlackjack
     {
+        /** La banca pide carta mientras tenga menos que esto. */
+        public const int PlantaBanca = 17;
+
         /** Crea la baraja de cada ronda. */
         private readonly Func<Baraja> crearBaraja;
         /** Baraja de la ronda actual. */
@@ -58,12 +74,11 @@ namespace BlackjackAvalonia.Juego
         /** Jugador de la mesa. */
         public Jugador Jugador { get; }
         /** Mano de la banca. */
-        public ManoJugador Banca { get; private set; } = new ManoJugador();
+        public Mano Banca { get; } = new();
         /** Fase actual de la ronda. */
         public FaseJuego Fase { get; private set; } = FaseJuego.Apuesta;
         /** Resultado de la última ronda; null mientras se juega. */
         public ResultadoRonda? Resultado { get; private set; }
-
         /** Cambio en el saldo del jugador en la última ronda terminada. */
         public int GananciaNeta { get; private set; }
 
@@ -74,7 +89,7 @@ namespace BlackjackAvalonia.Juego
          */
         public MesaBlackjack(Jugador jugador, Func<Baraja> crearBaraja = null)
         {
-            Jugador = jugador;
+            Jugador = jugador ?? throw new ArgumentNullException(nameof(jugador));
             this.crearBaraja = crearBaraja ?? (() => new Baraja());
         }
 
@@ -84,7 +99,7 @@ namespace BlackjackAvalonia.Juego
         /** Indica si el jugador puede doblar: primeras dos cartas y saldo suficiente. */
         public bool PuedeDoblar =>
             Fase == FaseJuego.TurnoJugador &&
-            Jugador.Cartas.Count == 2 &&
+            Jugador.Mano.Cartas.Count == 2 &&
             Jugador.Saldo >= Jugador.ApuestaActual;
 
         /**
@@ -96,24 +111,22 @@ namespace BlackjackAvalonia.Juego
         {
             if (Fase != FaseJuego.Apuesta)
                 throw new InvalidOperationException("Ya hay una ronda en curso.");
-            if (cantidad <= 0)
-                throw new InvalidOperationException("Ingresa una cantidad válida para apostar.");
 
             Jugador.HacerApuesta(cantidad);
 
             baraja = crearBaraja();
-            Jugador.Cartas.Clear();
-            Banca = new ManoJugador();
+            Jugador.Mano.Vaciar();
+            Banca.Vaciar();
             Resultado = null;
             GananciaNeta = 0;
 
-            Jugador.PedirCarta(baraja.RepartirCarta());
-            Banca.PedirCarta(baraja.RepartirCarta());
-            Jugador.PedirCarta(baraja.RepartirCarta());
-            Banca.PedirCarta(baraja.RepartirCarta());
+            Jugador.Mano.Agregar(baraja.RepartirCarta());
+            Banca.Agregar(baraja.RepartirCarta());
+            Jugador.Mano.Agregar(baraja.RepartirCarta());
+            Banca.Agregar(baraja.RepartirCarta());
 
-            bool blackjackJugador = Valor(Jugador.Cartas).Total == 21;
-            bool blackjackBanca = Valor(Banca.Cartas).Total == 21;
+            bool blackjackJugador = Jugador.Mano.EsBlackjack;
+            bool blackjackBanca = Banca.EsBlackjack;
 
             if (blackjackJugador && blackjackBanca)
                 Terminar(ResultadoRonda.Empate);
@@ -132,12 +145,12 @@ namespace BlackjackAvalonia.Juego
         public void PedirCarta()
         {
             ValidarTurno();
-            Jugador.PedirCarta(baraja.RepartirCarta());
+            Jugador.Mano.Agregar(baraja.RepartirCarta());
 
-            int total = Valor(Jugador.Cartas).Total;
-            if (total > 21)
+            var valor = Jugador.Mano.Valor;
+            if (valor.SePasa)
                 Terminar(ResultadoRonda.JugadorSePasa);
-            else if (total == 21)
+            else if (valor.Total == 21)
                 Plantarse();
         }
 
@@ -151,9 +164,9 @@ namespace BlackjackAvalonia.Juego
                 throw new InvalidOperationException("Solo puedes doblar con tus dos primeras cartas y saldo suficiente.");
 
             Jugador.HacerApuesta(Jugador.ApuestaActual);
-            Jugador.PedirCarta(baraja.RepartirCarta());
+            Jugador.Mano.Agregar(baraja.RepartirCarta());
 
-            if (Valor(Jugador.Cartas).Total > 21)
+            if (Jugador.Mano.Valor.SePasa)
                 Terminar(ResultadoRonda.JugadorSePasa);
             else
                 Plantarse();
@@ -167,13 +180,11 @@ namespace BlackjackAvalonia.Juego
         {
             ValidarTurno();
 
-            while (Valor(Banca.Cartas).Total < 17)
-            {
-                Banca.PedirCarta(baraja.RepartirCarta());
-            }
+            while (Banca.Valor.Total < PlantaBanca)
+                Banca.Agregar(baraja.RepartirCarta());
 
-            int jugador = Valor(Jugador.Cartas).Total;
-            int banca = Valor(Banca.Cartas).Total;
+            int jugador = Jugador.Mano.Valor.Total;
+            int banca = Banca.Valor.Total;
 
             if (banca > 21)
                 Terminar(ResultadoRonda.BancaSePasa);
@@ -186,35 +197,18 @@ namespace BlackjackAvalonia.Juego
         }
 
         /**
-         * @brief Calcula el valor de una mano.
-         * @param cartas Cartas de la mano
-         * @return Total y si es suave (un As cuenta como 11)
-         *
-         * Las figuras valen 10 y el As vale 11 si no hace pasar de 21, o 1 si lo hace.
+         * @brief Ganancia neta de un resultado para una apuesta.
+         * @param resultado Resultado de la ronda
+         * @param apuesta Cantidad apostada
+         * @return 3:2 en blackjack (redondeado hacia abajo), 1:1 al ganar, 0 en empate y -apuesta al perder
          */
-        public static (int Total, bool Suave) Valor(IEnumerable<Carta> cartas)
+        public static int CalcularGanancia(ResultadoRonda resultado, int apuesta) => resultado switch
         {
-            int total = 0;
-            bool hayAs = false;
-
-            foreach (var carta in cartas)
-            {
-                if (carta.Valor == "A")
-                {
-                    total += 1;
-                    hayAs = true;
-                }
-                else if (carta.Valor == "J" || carta.Valor == "Q" || carta.Valor == "K")
-                    total += 10;
-                else
-                    total += int.Parse(carta.Valor);
-            }
-
-            if (hayAs && total + 10 <= 21)
-                return (total + 10, true);
-
-            return (total, false);
-        }
+            ResultadoRonda.BlackjackJugador => apuesta * 3 / 2,
+            ResultadoRonda.Empate => 0,
+            _ when resultado.EsVictoria() => apuesta,
+            _ => -apuesta
+        };
 
         /**
          * @brief Verifica que sea el turno del jugador.
@@ -232,29 +226,8 @@ namespace BlackjackAvalonia.Juego
          */
         private void Terminar(ResultadoRonda resultado)
         {
-            int apuesta = Jugador.ApuestaActual;
-
-            switch (resultado)
-            {
-                case ResultadoRonda.BlackjackJugador:
-                    GananciaNeta = apuesta * 3 / 2;
-                    Jugador.GanarBlackjack();
-                    break;
-                case ResultadoRonda.GanaJugador:
-                case ResultadoRonda.BancaSePasa:
-                    GananciaNeta = apuesta;
-                    Jugador.GanarApuesta();
-                    break;
-                case ResultadoRonda.Empate:
-                    GananciaNeta = 0;
-                    Jugador.EmpatarApuesta();
-                    break;
-                default:
-                    GananciaNeta = -apuesta;
-                    Jugador.PerderApuesta();
-                    break;
-            }
-
+            GananciaNeta = CalcularGanancia(resultado, Jugador.ApuestaActual);
+            Jugador.Liquidar(GananciaNeta);
             Resultado = resultado;
             Fase = FaseJuego.Apuesta;
         }

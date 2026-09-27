@@ -13,3 +13,6 @@ obj/
 docs/html/
 docs/latex/
 docs/doxygen-advertencias.log
+
+# Resultados de pruebas
+TestResults/

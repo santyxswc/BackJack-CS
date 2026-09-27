@@ -10,52 +10,49 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using BlackjackAvalonia.Datos;
-using BlackjackAvalonia.Juego;
+using BlackJack.Core.Cuentas;
+using BlackJack.Core.Juego;
+using BlackJack.Core.Sesion;
 
-namespace BlackjackAvalonia
+namespace BlackJack.Desktop.Vistas
 {
     /**
-     * @brief Mesa de blackjack: apuestas, cartas, resultados y saldo del jugador.
+     * @brief Mesa de blackjack: dibuja el estado de la sesión y traduce la entrada del usuario en jugadas.
+     *
+     * Las reglas viven en MesaBlackjack y la coordinación (historial, estadísticas, guardado) en SesionJuego.
      */
     public partial class MainWindow : Window
     {
         /** Tipos de mensaje del aviso central (definen su color). */
         private enum TipoMensaje { Info, Victoria, Blackjack, Empate, Derrota, Error }
 
-        /** Cuenta del jugador. */
-        private readonly CuentaJugador cuenta;
-        /** Donde se guarda la cuenta. */
-        private readonly RepositorioJugadores repositorio;
-        /** Reglas y estado de la ronda. */
-        private readonly MesaBlackjack mesa;
-        /** Historial de la sesión. */
-        private readonly Historial historial;
+        /** Sesión de juego del jugador. */
+        private readonly SesionJuego sesion;
+        /** Navegación de vuelta al inicio de sesión. */
+        private readonly INavegacion navegacion;
+
+        /** Atajo a la mesa de la sesión. */
+        private MesaBlackjack Mesa => sesion.Mesa;
 
         /**
-         * @brief Crea una mesa de prueba con una cuenta de invitado.
+         * @brief Constructor para el diseñador de Avalonia; la aplicación usa el que recibe dependencias.
          */
-        public MainWindow() : this(new CuentaJugador { Usuario = "invitado", Saldo = RepositorioJugadores.SaldoInicial }, new RepositorioJugadores())
-        {
-        }
+        public MainWindow() => InitializeComponent();
 
         /**
          * @brief Crea la mesa de un jugador.
-         * @param cuenta Cuenta del jugador
-         * @param repositorio Donde se guarda la cuenta
+         * @param sesion Sesión de juego abierta
+         * @param navegacion Navegación de vuelta al inicio de sesión
          *
          * En el campo de apuesta solo se aceptan dígitos y Enter hace la apuesta.
          */
-        public MainWindow(CuentaJugador cuenta, RepositorioJugadores repositorio)
+        public MainWindow(SesionJuego sesion, INavegacion navegacion)
         {
             InitializeComponent();
-            this.cuenta = cuenta;
-            this.repositorio = repositorio;
+            this.sesion = sesion;
+            this.navegacion = navegacion;
 
-            mesa = new MesaBlackjack(new Jugador(cuenta.Saldo));
-            historial = new Historial(cuenta.Usuario, cuenta.Saldo);
-
-            Title = $"BlackJack - {cuenta.Usuario}";
+            Title = $"BlackJack - {sesion.Cuenta.Usuario}";
             imgFondo.Source = Recursos.Fondo;
 
             txtApuesta.AddHandler(TextInputEvent, (_, e) =>
@@ -68,11 +65,11 @@ namespace BlackjackAvalonia
             };
 
             KeyDown += Ventana_KeyDown;
-            Closing += (_, _) => AlCerrar();
+            Closing += (_, _) => sesion.Cerrar();
 
-            MostrarMensaje(cuenta.Saldo > 0
-                ? $"Bienvenido, {cuenta.Usuario}. Haz tu apuesta para comenzar."
-                : $"Bienvenido, {cuenta.Usuario}. No tienes saldo: recarga para seguir jugando.", TipoMensaje.Info);
+            MostrarMensaje(Mesa.Jugador.Saldo > 0
+                ? $"Bienvenido, {sesion.Cuenta.Usuario}. Haz tu apuesta para comenzar."
+                : $"Bienvenido, {sesion.Cuenta.Usuario}. No tienes saldo: recarga para seguir jugando.", TipoMensaje.Info);
             Refrescar();
         }
 
@@ -81,7 +78,7 @@ namespace BlackjackAvalonia
          */
         private void Apostar()
         {
-            if (mesa.Fase != FaseJuego.Apuesta) return;
+            if (Mesa.Fase != FaseJuego.Apuesta) return;
 
             if (!int.TryParse(txtApuesta.Text, out int cantidad) || cantidad <= 0)
             {
@@ -90,89 +87,57 @@ namespace BlackjackAvalonia
                 return;
             }
 
-            try
+            if (!Ejecutar(() => sesion.Apostar(cantidad)))
             {
-                mesa.Apostar(cantidad);
-            }
-            catch (InvalidOperationException ex)
-            {
-                MostrarMensaje(ex.Message, TipoMensaje.Error);
                 EnfocarApuesta();
                 return;
             }
 
-            historial.Escribir($"Apuesta realizada: ${cantidad}");
-            historial.Escribir($"Cartas del jugador: {string.Join(", ", mesa.Jugador.Cartas)}");
-            Guardar();
-
-            if (mesa.Fase == FaseJuego.TurnoJugador)
+            if (Mesa.Fase == FaseJuego.TurnoJugador)
                 MostrarMensaje("¿Pides carta, te plantas o doblas?", TipoMensaje.Info);
-
             DespuesDeJugada();
         }
 
         /**
-         * @brief Ejecuta una jugada del turno y la registra.
-         * @param accion Jugada (pedir, plantarse o doblar)
-         * @param descripcion Texto para el historial
+         * @brief Ejecuta una jugada del turno.
+         * @param jugada Jugada de la sesión (pedir, plantarse o doblar)
          */
-        private void Jugar(Action accion, string descripcion)
+        private void Jugar(Action jugada)
         {
-            if (mesa.Fase != FaseJuego.TurnoJugador) return;
+            if (Mesa.Fase != FaseJuego.TurnoJugador) return;
+            if (Ejecutar(jugada))
+                DespuesDeJugada();
+        }
 
+        /**
+         * @brief Ejecuta una acción de la sesión y muestra el error si falla.
+         * @param accion Acción a ejecutar
+         * @return true si terminó sin errores
+         *
+         * Los errores de reglas (InvalidOperationException) y de guardado (E/S) se muestran en el aviso central.
+         */
+        private bool Ejecutar(Action accion)
+        {
             try
             {
                 accion();
+                return true;
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex) when (ex is InvalidOperationException or IOException or UnauthorizedAccessException)
             {
                 MostrarMensaje(ex.Message, TipoMensaje.Error);
-                return;
+                return false;
             }
-
-            historial.Escribir(descripcion);
-            historial.Escribir($"Cartas del jugador: {string.Join(", ", mesa.Jugador.Cartas)}");
-            DespuesDeJugada();
         }
 
         /**
-         * @brief Si la ronda terminó, registra y muestra el resultado; luego actualiza la mesa.
+         * @brief Si la ronda terminó muestra el resultado; luego actualiza la mesa.
          */
         private void DespuesDeJugada()
         {
-            if (mesa.Fase == FaseJuego.Apuesta && mesa.Resultado.HasValue)
-            {
-                RegistrarResultado();
+            if (sesion.RondaTerminada)
                 MostrarResultado();
-            }
             Refrescar();
-        }
-
-        /**
-         * @brief Actualiza las estadísticas, escribe el historial y guarda la cuenta.
-         */
-        private void RegistrarResultado()
-        {
-            switch (mesa.Resultado)
-            {
-                case ResultadoRonda.BlackjackJugador:
-                case ResultadoRonda.GanaJugador:
-                case ResultadoRonda.BancaSePasa:
-                    cuenta.Ganadas++;
-                    break;
-                case ResultadoRonda.Empate:
-                    cuenta.Empatadas++;
-                    break;
-                default:
-                    cuenta.Perdidas++;
-                    break;
-            }
-
-            historial.Escribir($"Cartas de la banca: {string.Join(", ", mesa.Banca.Cartas)}");
-            historial.Escribir($"Resultado de la ronda: {mesa.Resultado} ({mesa.GananciaNeta:+#;-#;0})");
-            historial.Escribir($"Saldo después de la ronda: ${mesa.Jugador.Saldo}");
-            historial.Escribir("--------------------------------------------------");
-            Guardar();
         }
 
         /**
@@ -180,11 +145,11 @@ namespace BlackjackAvalonia
          */
         private void MostrarResultado()
         {
-            int jugador = MesaBlackjack.Valor(mesa.Jugador.Cartas).Total;
-            int banca = MesaBlackjack.Valor(mesa.Banca.Cartas).Total;
-            int monto = Math.Abs(mesa.GananciaNeta);
+            int jugador = Mesa.Jugador.Mano.Valor.Total;
+            int banca = Mesa.Banca.Valor.Total;
+            int monto = Math.Abs(Mesa.GananciaNeta);
 
-            switch (mesa.Resultado)
+            switch (Mesa.Resultado)
             {
                 case ResultadoRonda.BlackjackJugador:
                     MostrarMensaje($"¡Blackjack! Ganas ${monto}", TipoMensaje.Blackjack);
@@ -196,7 +161,7 @@ namespace BlackjackAvalonia
                     MostrarMensaje($"La banca se pasó con {banca}. ¡Ganas ${monto}!", TipoMensaje.Victoria);
                     break;
                 case ResultadoRonda.Empate:
-                    MostrarMensaje(jugador == 21 && mesa.Jugador.Cartas.Count == 2 && mesa.Banca.Cartas.Count == 2
+                    MostrarMensaje(Mesa.Jugador.Mano.EsBlackjack && Mesa.Banca.EsBlackjack
                         ? "Ambos tienen Blackjack: empate. Recuperas tu apuesta."
                         : $"Empate a {jugador}. Recuperas tu apuesta.", TipoMensaje.Empate);
                     break;
@@ -211,41 +176,8 @@ namespace BlackjackAvalonia
                     break;
             }
 
-            if (mesa.Jugador.Saldo == 0)
-                lblMensaje.Text += "\nTe quedaste sin saldo: usa \"Recargar $1000\".";
-        }
-
-        /**
-         * @brief Guarda el saldo y las estadísticas de la cuenta.
-         */
-        private void Guardar()
-        {
-            cuenta.Saldo = mesa.Jugador.Saldo;
-            try
-            {
-                repositorio.Guardar(cuenta);
-            }
-            catch (Exception ex)
-            {
-                MostrarMensaje($"No se pudo guardar el progreso: {ex.Message}", TipoMensaje.Error);
-            }
-        }
-
-        /**
-         * @brief Al cerrar la ventana en medio de una mano, el jugador se planta; luego se guarda todo.
-         */
-        private void AlCerrar()
-        {
-            if (mesa.Fase == FaseJuego.TurnoJugador)
-            {
-                historial.Escribir("Ventana cerrada durante la mano: el jugador se planta.");
-                mesa.Plantarse();
-                RegistrarResultado();
-            }
-
-            Guardar();
-            historial.Escribir("Sesión terminada.");
-            historial.Dispose();
+            if (Mesa.Jugador.Saldo == 0)
+                lblMensaje.Text += $"\nTe quedaste sin saldo: usa \"Recargar ${ServicioCuentas.SaldoInicial}\".";
         }
 
         /**
@@ -253,27 +185,28 @@ namespace BlackjackAvalonia
          */
         private void Refrescar()
         {
-            var jugador = mesa.Jugador;
-            bool jugando = mesa.Fase == FaseJuego.TurnoJugador;
+            var jugador = Mesa.Jugador;
+            var cuenta = sesion.Cuenta;
+            bool jugando = Mesa.Fase == FaseJuego.TurnoJugador;
 
             lblUsuario.Text = cuenta.Usuario;
             lblEstadisticas.Text = $"Ganadas {cuenta.Ganadas}  ·  Perdidas {cuenta.Perdidas}  ·  Empates {cuenta.Empatadas}";
             lblSaldo.Text = $"${jugador.Saldo}";
 
-            MostrarCartas(panelCartasJugador, jugador.Cartas, ocultarSegunda: false);
-            MostrarCartas(panelCartasBanca, mesa.Banca.Cartas, ocultarSegunda: mesa.OcultarCartaBanca);
+            MostrarCartas(panelCartasJugador, jugador.Mano.Cartas, ocultarSegunda: false);
+            MostrarCartas(panelCartasBanca, Mesa.Banca.Cartas, ocultarSegunda: Mesa.OcultarCartaBanca);
 
-            MostrarValor(bordeValorJugador, lblValorJugador, jugador.Cartas, mostrarSuave: jugando);
-            if (mesa.OcultarCartaBanca)
-                MostrarValor(bordeValorBanca, lblValorBanca, mesa.Banca.Cartas.Take(1), mostrarSuave: false, sufijo: " + ?");
+            MostrarValor(bordeValorJugador, lblValorJugador, jugador.Mano.Cartas, mostrarSuave: jugando);
+            if (Mesa.OcultarCartaBanca)
+                MostrarValor(bordeValorBanca, lblValorBanca, Mesa.Banca.Cartas.Take(1), mostrarSuave: false, sufijo: " + ?");
             else
-                MostrarValor(bordeValorBanca, lblValorBanca, mesa.Banca.Cartas, mostrarSuave: false);
+                MostrarValor(bordeValorBanca, lblValorBanca, Mesa.Banca.Cartas, mostrarSuave: false);
 
             lblApuestaEnJuego.Text = jugando ? $"Apuesta: ${jugador.ApuestaActual}" : "";
 
             panelApuesta.IsVisible = !jugando;
             panelJuego.IsVisible = jugando;
-            btnDoblar.IsEnabled = mesa.PuedeDoblar;
+            btnDoblar.IsEnabled = Mesa.PuedeDoblar;
             btnRecargar.IsVisible = !jugando && jugador.Saldo == 0;
             btnCerrarSesion.IsEnabled = !jugando;
 
@@ -286,7 +219,7 @@ namespace BlackjackAvalonia
          * @param cartas Cartas
          * @param ocultarSegunda true para mostrar la segunda carta boca abajo
          */
-        private static void MostrarCartas(Panel panel, List<Carta> cartas, bool ocultarSegunda)
+        private static void MostrarCartas(Panel panel, IReadOnlyList<Carta> cartas, bool ocultarSegunda)
         {
             panel.Children.Clear();
             for (int i = 0; i < cartas.Count; i++)
@@ -333,7 +266,7 @@ namespace BlackjackAvalonia
             var lista = cartas.ToList();
             borde.IsVisible = lista.Count > 0;
 
-            var (total, suave) = MesaBlackjack.Valor(lista);
+            var (total, suave) = ValorMano.De(lista);
             etiqueta.Text = (mostrarSuave && suave && total < 21 ? $"{total - 10}/{total}" : total.ToString()) + sufijo;
         }
 
@@ -371,13 +304,13 @@ namespace BlackjackAvalonia
          */
         private void Ventana_KeyDown(object sender, KeyEventArgs e)
         {
-            if (mesa.Fase == FaseJuego.TurnoJugador)
+            if (Mesa.Fase == FaseJuego.TurnoJugador)
             {
                 switch (e.Key)
                 {
-                    case Key.P: btnPedir_Click(null, null); e.Handled = true; break;
-                    case Key.S: btnPlantarse_Click(null, null); e.Handled = true; break;
-                    case Key.D when mesa.PuedeDoblar: btnDoblar_Click(null, null); e.Handled = true; break;
+                    case Key.P: Jugar(sesion.PedirCarta); e.Handled = true; break;
+                    case Key.S: Jugar(sesion.Plantarse); e.Handled = true; break;
+                    case Key.D when Mesa.PuedeDoblar: Jugar(sesion.Doblar); e.Handled = true; break;
                 }
             }
             else if (e.Key == Key.Enter)
@@ -387,36 +320,17 @@ namespace BlackjackAvalonia
             }
         }
 
-        /**
-         * @brief Botón Apostar.
-         * @param sender Botón
-         * @param e Evento
-         */
+        /** @brief Botón Apostar. */
         private void btnApostar_Click(object sender, RoutedEventArgs e) => Apostar();
 
-        /**
-         * @brief Botón Pedir carta.
-         * @param sender Botón
-         * @param e Evento
-         */
-        private void btnPedir_Click(object sender, RoutedEventArgs e) =>
-            Jugar(mesa.PedirCarta, "El jugador pidió una carta.");
+        /** @brief Botón Pedir carta. */
+        private void btnPedir_Click(object sender, RoutedEventArgs e) => Jugar(sesion.PedirCarta);
 
-        /**
-         * @brief Botón Plantarse.
-         * @param sender Botón
-         * @param e Evento
-         */
-        private void btnPlantarse_Click(object sender, RoutedEventArgs e) =>
-            Jugar(mesa.Plantarse, "El jugador se plantó.");
+        /** @brief Botón Plantarse. */
+        private void btnPlantarse_Click(object sender, RoutedEventArgs e) => Jugar(sesion.Plantarse);
 
-        /**
-         * @brief Botón Doblar.
-         * @param sender Botón
-         * @param e Evento
-         */
-        private void btnDoblar_Click(object sender, RoutedEventArgs e) =>
-            Jugar(mesa.Doblar, "El jugador dobló la apuesta.");
+        /** @brief Botón Doblar. */
+        private void btnDoblar_Click(object sender, RoutedEventArgs e) => Jugar(sesion.Doblar);
 
         /**
          * @brief Suma el valor de la ficha a la apuesta, sin pasar del saldo.
@@ -427,42 +341,28 @@ namespace BlackjackAvalonia
         {
             int ficha = int.Parse((string)((Button)sender).Tag);
             int.TryParse(txtApuesta.Text, out int actual);
-            txtApuesta.Text = Math.Min((long)actual + ficha, mesa.Jugador.Saldo).ToString();
+            txtApuesta.Text = Math.Min((long)actual + ficha, Mesa.Jugador.Saldo).ToString();
             txtApuesta.CaretIndex = txtApuesta.Text.Length;
             EnfocarApuesta();
         }
 
-        /**
-         * @brief Borra la apuesta escrita.
-         * @param sender Botón
-         * @param e Evento
-         */
+        /** @brief Borra la apuesta escrita. */
         private void btnLimpiar_Click(object sender, RoutedEventArgs e)
         {
             txtApuesta.Text = "";
             EnfocarApuesta();
         }
 
-        /**
-         * @brief Recarga el saldo inicial cuando el jugador se queda sin dinero.
-         * @param sender Botón
-         * @param e Evento
-         */
+        /** @brief Recarga el saldo inicial cuando el jugador se queda sin dinero. */
         private void btnRecargar_Click(object sender, RoutedEventArgs e)
         {
-            mesa.Jugador.Depositar(RepositorioJugadores.SaldoInicial);
-            historial.Escribir($"Recarga de saldo: ${RepositorioJugadores.SaldoInicial}");
-            Guardar();
-            MostrarMensaje($"Recargaste ${RepositorioJugadores.SaldoInicial}. ¡Suerte!", TipoMensaje.Info);
+            if (!Ejecutar(sesion.Recargar)) return;
+            MostrarMensaje($"Recargaste ${ServicioCuentas.SaldoInicial}. ¡Suerte!", TipoMensaje.Info);
             Refrescar();
         }
 
-        /**
-         * @brief Cierra la sesión y vuelve al inicio de sesión.
-         * @param sender Botón
-         * @param e Evento
-         */
+        /** @brief Cierra la sesión y vuelve al inicio de sesión. */
         private void btnCerrarSesion_Click(object sender, RoutedEventArgs e) =>
-            App.CambiarVentana(this, new LoginWindow(repositorio));
+            navegacion.AbrirInicioSesion(this);
     }
 }

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Implementaciones de los contratos de Core: archivos JSON, historial y hashing. -->
+  <PropertyGroup>
+    <RootNamespace>BlackJack.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlackJack.Core\BlackJack.Core.csproj" />
+  </ItemGroup>
+
+</Project>

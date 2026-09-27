@@ -6,35 +6,37 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using BlackjackAvalonia.Datos;
+using BlackJack.Core.Cuentas;
 
-namespace BlackjackAvalonia
+namespace BlackJack.Desktop.Vistas
 {
     /**
      * @brief Inicio de sesión y creación de cuentas de jugador.
      */
     public partial class LoginWindow : Window
     {
-        /** Cuentas de los jugadores. */
-        private readonly RepositorioJugadores repositorio;
+        /** Registro e inicio de sesión. */
+        private readonly ServicioCuentas cuentas;
+        /** Cambio de ventana al entrar. */
+        private readonly INavegacion navegacion;
 
         /**
-         * @brief Crea la ventana con el repositorio por defecto.
+         * @brief Constructor para el diseñador de Avalonia; la aplicación usa el que recibe dependencias.
          */
-        public LoginWindow() : this(new RepositorioJugadores())
-        {
-        }
+        public LoginWindow() => InitializeComponent();
 
         /**
          * @brief Crea la ventana.
-         * @param repositorio Cuentas de los jugadores
+         * @param cuentas Registro e inicio de sesión
+         * @param navegacion Navegación hacia la mesa
          *
          * Enter en el usuario pasa a la contraseña; Enter en la contraseña inicia sesión.
          */
-        public LoginWindow(RepositorioJugadores repositorio)
+        public LoginWindow(ServicioCuentas cuentas, INavegacion navegacion)
         {
             InitializeComponent();
-            this.repositorio = repositorio;
+            this.cuentas = cuentas;
+            this.navegacion = navegacion;
             imgFondo.Source = Recursos.Fondo;
 
             txtUsuario.KeyDown += (_, e) =>
@@ -64,7 +66,7 @@ namespace BlackjackAvalonia
         {
             try
             {
-                AbrirMesa(repositorio.Registrar(txtUsuario.Text, txtClave.Text));
+                AbrirMesa(cuentas.Registrar(txtUsuario.Text, txtClave.Text));
             }
             catch (Exception ex)
             {
@@ -85,7 +87,7 @@ namespace BlackjackAvalonia
 
             try
             {
-                var cuenta = repositorio.IniciarSesion(txtUsuario.Text, txtClave.Text);
+                var cuenta = cuentas.IniciarSesion(txtUsuario.Text, txtClave.Text);
                 if (cuenta == null)
                 {
                     MostrarError("Usuario o contraseña incorrectos.");
@@ -105,8 +107,7 @@ namespace BlackjackAvalonia
          * @brief Abre la mesa del jugador y cierra esta ventana.
          * @param cuenta Cuenta del jugador
          */
-        private void AbrirMesa(CuentaJugador cuenta) =>
-            App.CambiarVentana(this, new MainWindow(cuenta, repositorio));
+        private void AbrirMesa(CuentaJugador cuenta) => navegacion.AbrirMesa(this, cuenta);
 
         /**
          * @brief Muestra un error debajo de los campos.

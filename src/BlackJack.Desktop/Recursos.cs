@@ -4,9 +4,9 @@
  * @author Santiago Caicedo
  */
 using Avalonia.Media.Imaging;
-using BlackjackAvalonia.Juego;
+using BlackJack.Core.Juego;
 
-namespace BlackjackAvalonia
+namespace BlackJack.Desktop
 {
     /**
      * @brief Carga las imágenes de la carpeta imagenes (junto al ejecutable).
@@ -29,7 +29,7 @@ namespace BlackjackAvalonia
          * @param carta Carta
          * @return Imagen, o null si el archivo no existe
          */
-        public static Bitmap ImagenCarta(Carta carta) => Cargar($"{carta.Valor}_de_{carta.Palo}.jpg");
+        public static Bitmap ImagenCarta(Carta carta) => Cargar($"{carta.Simbolo}_de_{carta.Palo}.jpg");
 
         /**
          * @brief Carga una imagen o la toma de la caché.
