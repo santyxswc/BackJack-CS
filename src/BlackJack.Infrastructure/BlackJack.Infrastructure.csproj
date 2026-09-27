@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Implementaciones de los contratos de Core: archivos JSON, historial y hashing. -->
   <PropertyGroup>
     <RootNamespace>BlackJack.Infrastructure</RootNamespace>
   </PropertyGroup>

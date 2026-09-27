@@ -13,7 +13,7 @@ using BlackJack.Infrastructure;
 namespace BlackJack.Desktop
 {
     /**
-     * @brief Navegación entre ventanas; las vistas dependen de esta interfaz, no de cómo se crean las otras.
+     * @brief Navegación entre la ventana de inicio de sesión y la mesa.
      */
     public interface INavegacion
     {
@@ -32,7 +32,7 @@ namespace BlackJack.Desktop
     }
 
     /**
-     * @brief Raíz de composición: crea los servicios una vez y construye cada ventana con sus dependencias.
+     * @brief Crea los servicios de la aplicación y abre cada ventana con sus dependencias.
      */
     public sealed class Navegacion : INavegacion
     {
@@ -54,14 +54,21 @@ namespace BlackJack.Desktop
         /** @brief Ventana inicial de la aplicación. */
         public Window CrearVentanaInicial() => new LoginWindow(cuentas, this);
 
-        /** @copydoc INavegacion::AbrirMesa */
+        /**
+         * @brief Abre la mesa de un jugador en lugar de la ventana actual.
+         * @param actual Ventana que se cierra
+         * @param cuenta Cuenta del jugador
+         */
         public void AbrirMesa(Window actual, CuentaJugador cuenta)
         {
             var sesion = new SesionJuego(cuenta, cuentas, new HistorialArchivo(RutasDatos.CarpetaHistorial, cuenta.Usuario));
             Cambiar(actual, new MainWindow(sesion, this));
         }
 
-        /** @copydoc INavegacion::AbrirInicioSesion */
+        /**
+         * @brief Vuelve al inicio de sesión.
+         * @param actual Ventana que se cierra
+         */
         public void AbrirInicioSesion(Window actual) => Cambiar(actual, new LoginWindow(cuentas, this));
 
         /**

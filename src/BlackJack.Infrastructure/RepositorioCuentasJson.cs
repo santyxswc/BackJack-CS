@@ -32,11 +32,18 @@ namespace BlackJack.Infrastructure
             rutaArchivo = Path.Combine(carpeta, "jugadores.json");
         }
 
-        /** @copydoc IRepositorioCuentas::Buscar */
+        /**
+         * @brief Busca una cuenta sin distinguir mayúsculas.
+         * @param usuario Nombre de usuario
+         * @return Cuenta, o null si no existe
+         */
         public CuentaJugador Buscar(string usuario) =>
             Cargar().FirstOrDefault(c => MismoUsuario(c, usuario));
 
-        /** @copydoc IRepositorioCuentas::Guardar */
+        /**
+         * @brief Crea o actualiza una cuenta.
+         * @param cuenta Cuenta a guardar
+         */
         public void Guardar(CuentaJugador cuenta)
         {
             var cuentas = Cargar();

@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Dominio y casos de uso. Sin dependencias externas: no conoce la interfaz ni el disco. -->
   <PropertyGroup>
     <RootNamespace>BlackJack.Core</RootNamespace>
   </PropertyGroup>

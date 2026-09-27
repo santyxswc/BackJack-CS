@@ -27,7 +27,10 @@ namespace BlackJack.Infrastructure
             writer = new StreamWriter(ruta, append: true) { AutoFlush = true };
         }
 
-        /** @copydoc IHistorialPartida::Escribir */
+        /**
+         * @brief Agrega una línea al historial.
+         * @param linea Texto a escribir
+         */
         public void Escribir(string linea) => writer?.WriteLine(linea);
 
         /** @brief Cierra el archivo. */

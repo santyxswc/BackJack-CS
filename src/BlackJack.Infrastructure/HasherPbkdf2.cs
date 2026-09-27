@@ -20,14 +20,24 @@ namespace BlackJack.Infrastructure
         /** Tamaño del hash en bytes. */
         private const int BytesHash = 32;
 
-        /** @copydoc IHasherClaves::Crear */
+        /**
+         * @brief Genera un hash con una sal nueva.
+         * @param clave Contraseña
+         * @return Hash y sal codificados en Base64
+         */
         public (string Hash, string Sal) Crear(string clave)
         {
             byte[] sal = RandomNumberGenerator.GetBytes(BytesSal);
             return (Convert.ToBase64String(Derivar(clave, sal)), Convert.ToBase64String(sal));
         }
 
-        /** @copydoc IHasherClaves::Verificar */
+        /**
+         * @brief Comprueba una contraseña contra su hash en tiempo constante.
+         * @param clave Contraseña a verificar
+         * @param hash Hash guardado (Base64)
+         * @param sal Sal guardada (Base64)
+         * @return true si coincide
+         */
         public bool Verificar(string clave, string hash, string sal)
         {
             byte[] esperado = Convert.FromBase64String(hash);

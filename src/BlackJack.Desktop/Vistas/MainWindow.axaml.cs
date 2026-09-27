@@ -18,8 +18,6 @@ namespace BlackJack.Desktop.Vistas
 {
     /**
      * @brief Mesa de blackjack: dibuja el estado de la sesión y traduce la entrada del usuario en jugadas.
-     *
-     * Las reglas viven en MesaBlackjack y la coordinación (historial, estadísticas, guardado) en SesionJuego.
      */
     public partial class MainWindow : Window
     {

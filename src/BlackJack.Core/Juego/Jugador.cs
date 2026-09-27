@@ -8,7 +8,7 @@ namespace BlackJack.Core.Juego
     /**
      * @brief Participante que apuesta contra la banca.
      *
-     * La mano se modela aparte (Mano); aquí solo vive el dinero.
+     * Las cartas están en Mano; esta clase maneja el saldo y la apuesta.
      */
     public class Jugador
     {

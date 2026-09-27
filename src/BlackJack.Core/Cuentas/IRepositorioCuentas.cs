@@ -6,7 +6,7 @@
 namespace BlackJack.Core.Cuentas
 {
     /**
-     * @brief Almacén de cuentas. Core no sabe si es un archivo, una base de datos o memoria.
+     * @brief Almacén de las cuentas de los jugadores.
      */
     public interface IRepositorioCuentas
     {

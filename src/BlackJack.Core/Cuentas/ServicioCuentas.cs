@@ -9,8 +9,6 @@ namespace BlackJack.Core.Cuentas
 {
     /**
      * @brief Reglas de las cuentas: validación, registro, inicio de sesión y recargas.
-     *
-     * Depende de abstracciones (IRepositorioCuentas, IHasherClaves), así que se prueba sin tocar el disco.
      */
     public class ServicioCuentas
     {

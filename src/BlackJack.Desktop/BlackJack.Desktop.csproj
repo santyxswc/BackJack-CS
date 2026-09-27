@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Interfaz de escritorio (Avalonia) y raíz de composición. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BlackJack.Desktop</RootNamespace>
@@ -21,7 +20,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.12" />
-    <!-- Dependencia transitiva de Avalonia.FreeDesktop fijada a la versión que corrige GHSA-xrw6-gwf8-vvr9. -->
+    <!-- Corrige GHSA-xrw6-gwf8-vvr9 -->
     <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
   </ItemGroup>
 

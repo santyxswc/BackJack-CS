@@ -11,9 +11,8 @@ namespace BlackJack.Core.Sesion
     /**
      * @brief Coordina la mesa, la cuenta del jugador y el historial durante una sesión.
      *
-     * Cada jugada se aplica en la mesa, se registra en el historial y, al terminar la ronda,
-     * actualiza las estadísticas y guarda la cuenta. La interfaz solo llama a estos métodos y
-     * dibuja el estado; no contiene reglas ni persistencia.
+     * Cada jugada se aplica en la mesa y se registra en el historial; al terminar la ronda
+     * se actualizan las estadísticas y se guarda la cuenta.
      */
     public sealed class SesionJuego : IDisposable
     {

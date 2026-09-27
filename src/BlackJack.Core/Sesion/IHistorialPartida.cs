@@ -6,7 +6,7 @@
 namespace BlackJack.Core.Sesion
 {
     /**
-     * @brief Destino de las líneas del historial de una sesión (archivo, consola, memoria...).
+     * @brief Destino de las líneas del historial de una sesión.
      */
     public interface IHistorialPartida : IDisposable
     {
