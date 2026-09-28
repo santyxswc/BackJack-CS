@@ -1,6 +1,6 @@
 # BlackJack
 
-[![CI](https://github.com/santyxswc/BackJack-CS/actions/workflows/ci.yml/badge.svg)](https://github.com/santyxswc/BackJack-CS/actions/workflows/ci.yml)
+[![CI](https://github.com/santyxswc/BlackJack-CS/actions/workflows/ci.yml/badge.svg)](https://github.com/santyxswc/BlackJack-CS/actions/workflows/ci.yml)
 
 Juego de Blackjack de escritorio contra la banca, con **cuentas de jugador** que guardan el saldo y las
 estadísticas entre partidas.
